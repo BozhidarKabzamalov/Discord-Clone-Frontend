@@ -3,24 +3,32 @@
         <div class="wrapper">
             <div class='username-container' v-if='!this.username'>
                 <form class='username-form' @submit='setUsername($event)'>
-                    <input v-model="usernameInput" placeholder="Pick a username">
+                    <input class='username-input' v-model="usernameInput" placeholder="Pick a username">
                     <div class='enter-chat' @click='setUsername($event)'>Enter chat</div>
                 </form>
             </div>
-            <div v-else class="chat">
-                <div class="messages">
-                    <div class='message-container' v-for='message in messages'>
-                        <div class="username-date-container">
-                            <p class='username'>{{ message.username }}</p>
-                            <p class='date'>{{ getTimeAndDate(message.time) }}</p>
+            <div class="container" v-else>
+                <div class='chat-container'>
+                    <div class="chat">
+                        <div class="messages">
+                            <div class='message-container' v-for='message in messages'>
+                                <div class="username-date-container">
+                                    <p class='username'>{{ message.username }}</p>
+                                    <p class='date'>{{ getTimeAndDate(message.time) }}</p>
+                                </div>
+                                <p class='message'>{{ message.message }}</p>
+                            </div>
                         </div>
-                        <p class='message'>{{ message.message }}</p>
                     </div>
+                    <form @submit='sendMessage($event)'>
+                        <input class='message-input' v-model="message" placeholder="Type a message">
+                    </form>
+                </div>
+                <div class="online-users">
+                    <p class='user' v-for='user in onlineUsers'>{{ user }}</p>
                 </div>
             </div>
-            <form @submit='sendMessage($event)'>
-                <input class='message-input' v-model="message" placeholder="Type a message">
-            </form>
+
         </div>
     </div>
 </template>
@@ -36,7 +44,8 @@
                 usernameInput: null,
                 username: null,
                 messages: [],
-                message: null
+                message: null,
+                onlineUsers: []
             }
         },
         methods: {
@@ -44,6 +53,7 @@
                 event.preventDefault()
                 this.username = this.usernameInput
                 this.usernameInput = null
+                this.socket.emit('setSocketUsername', this.username)
             },
             sendMessage(event){
                 event.preventDefault()
@@ -62,15 +72,20 @@
         mounted(){
             this.socket.on('message', (message) => {
                 this.messages.push(message)
-            });
+            })
+
+            this.socket.on('userConnected', (connectedUsers) => {
+                this.onlineUsers = connectedUsers
+            })
+
+            this.socket.on('userDisconnected', (username) => {
+                this.onlineUsers.pop(username)
+            })
         }
     }
 </script>
 
 <style scoped>
-    .home {
-        padding: 20px 0;
-    }
     .username-container {
         height: 100vh;
         display: flex;
@@ -87,7 +102,6 @@
         align-items: center;
         height: 40px;
         background-color: #5bc0de;
-        border-radius: 10px;
         color: #f1f1f1;
         font-weight: bold;
     }
@@ -97,7 +111,7 @@
     }
     .messages {
         padding: 20px;
-        height: 500px;
+        height: 400px;
         overflow-y: scroll;
     }
     .message-container {
@@ -134,5 +148,32 @@
         border-bottom: 1px solid #c0c2c6;
         border-right: 1px solid #c0c2c6;
         border-left: 1px solid #c0c2c6;
+    }
+    .chat-container {
+        flex: 1;
+    }
+    .username-input {
+        width: 100%;
+        padding: 15px;
+        outline: none;
+        border: none;
+        border: 1px solid #c0c2c6;
+        margin-bottom: 10px;
+    }
+    .online-users {
+        width: 150px;
+        background-color: #ffffff;
+        border-top: 1px solid #c0c2c6;
+        border-right: 1px solid #c0c2c6;
+        border-bottom: 1px solid #c0c2c6;
+        padding: 15px;
+    }
+    .container {
+        width: 100%;
+        display: flex;
+        padding: 20px 0;
+    }
+    .user {
+        margin-bottom: 10px;
     }
 </style>

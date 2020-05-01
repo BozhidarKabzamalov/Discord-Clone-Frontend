@@ -18,7 +18,7 @@
         background-color: #e9ebee;
     }
     .wrapper {
-        width: 30%;
+        width: 600px;
         margin: 0 auto;
     }
 </style>
