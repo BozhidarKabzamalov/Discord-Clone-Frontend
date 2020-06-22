@@ -15,10 +15,9 @@
     }
     body {
         font-family: 'Roboto', 'Helvetica', 'Helvetica Neue', 'Arial', sans-serif;
-        background-color: #e9ebee;
     }
-    .wrapper {
-        width: 600px;
-        margin: 0 auto;
+    .responsive-image {
+        width: 100%;
+        height: 100%;
     }
 </style>
