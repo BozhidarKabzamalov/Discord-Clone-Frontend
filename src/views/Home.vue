@@ -1,21 +1,20 @@
 <template>
     <div class="home">
-
         <div class="servers">
-            <div v-for='(server, index) in servers' class="server" @click='changeServer(server, index)'>
+            <div v-for='(server, index) in servers' class="server" @click='joinServer(server, index)'>
 
             </div>
         </div>
 
         <div class="rooms">
-            <div class='room' v-for='(room, index) in servers[selectedServer].rooms' @click='changeRoom(room, index)'>
+            <div class='room' v-for='(room, index) in servers[selectedServer].rooms' @click='joinRoom(room, index)'>
                 <p>{{ room.name }}</p>
             </div>
         </div>
 
         <div class='chat-container'>
             <div class="chat">
-                <p>{{ servers[selectedServer].rooms[selectedServerRoom].name }}</p>
+                <p class='room-name'>{{ servers[selectedServer].rooms[selectedServerRoom].name }}</p>
                 <div class="messages">
                     <div class='message-container' v-for='message in messages'>
                         <div class="username-date-container">
@@ -65,7 +64,7 @@ import moment from 'moment'
 export default {
     data(){
         return {
-            socket: null,
+            socket: '',
             users: [],
             servers: [
                 {
@@ -130,8 +129,20 @@ export default {
                 message: this.insertEmojis(this.message),
                 time: Date.now()
             }
-            this.socket.emit('message', fullMessage)
+            this.socket.emit('messageToServer', fullMessage)
             this.message = ''
+        },
+        joinServer(server, index){
+            if (this.socket) {
+                this.socket.close()
+            }
+            this.selectedServer = index
+            this.socket = io('http://localhost:3000' + server.endpoint)
+            this.joinRoom(server.rooms[0], 0)
+        },
+        joinRoom(room, index){
+            this.selectedServerRoom = index
+            this.socket.emit('joinRoom', room.name)
         },
         getTimeAndDate(timestamp){
             return moment(timestamp).subtract(10, 'days').calendar();
@@ -143,26 +154,25 @@ export default {
 
             return message
         },
-        changeServer(server, index){
-            this.selectedServer = index
-            this.socket = io('http://localhost:3000' + this.servers[index].endpoint)
-        },
-        changeRoom(room, index){
-            this.selectedServerRoom = index
-            this.socket.emit('changeRoom', room.name)
+    },
+    watch: {
+        socket: function(){
+            this.socket.on('messageToClient', (message) => {
+                this.messages.push(message)
+                console.log('messageToClient')
+            })
+            this.socket.on('chatHistory', (chatHistory) => {
+                this.messages = chatHistory
+                console.log('Chat History')
+            })
         }
     },
     mounted(){
+        if (this.socket) {
+            this.socket.close()
+        }
         this.socket = io('http://localhost:3000' + this.servers[this.selectedServer].endpoint)
-        this.changeRoom(this.servers[this.selectedServer].rooms[0], 0)
-
-        this.socket.on('message', (message) => {
-            this.messages.push(message)
-        })
-
-        this.socket.on('chatHistory', (chatHistory) => {
-            console.log(chatHistory)
-        })
+        this.joinRoom(this.servers[this.selectedServer].rooms[0], 0)
     }
 }
 </script>
@@ -172,8 +182,8 @@ export default {
 /* Home CSS */
 
 .home {
-    width: 100vw;
-    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
     display: flex;
 }
 
@@ -315,5 +325,11 @@ export default {
     align-items: center;
     padding: 20px;
     color: #ffffff;
+}
+.room-name {
+    padding: 15px 0 0 15px;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 18px;
 }
 </style>
