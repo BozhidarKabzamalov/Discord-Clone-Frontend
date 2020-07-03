@@ -1,6 +1,12 @@
 <template>
     <div class="home">
         <div class="servers">
+            <div @click='test()'>
+                TEST
+            </div>
+            <div @click='newServer()'>
+                New Server
+            </div>
             <div v-for='(server, index) in servers' class="server" @click='joinServer(server, index)'>
 
             </div>
@@ -60,6 +66,7 @@
 <script>
 import io from 'socket.io-client'
 import moment from 'moment'
+import axios from 'axios'
 
 export default {
     data(){
@@ -154,16 +161,40 @@ export default {
 
             return message
         },
+        newServer(){
+            let server =    {
+                                name: 'AOT',
+                                image: 'https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltfe81204b8ec63e0e/5e6184a918d3347ceffbbd6d/TFT.S3_GALAXIES.ARTICLE-2.jpg',
+                                endpoint: '/aot',
+                                rooms: [
+                                    {
+                                        name: 'General', namespace: 'AOT', history: []
+                                    },
+                                    {
+                                        name: 'Titans', namespace: 'AOT', history: []
+                                    },
+                                ]
+                            }
+            this.servers.push(server)
+            axios.post('http://localhost:3000/createServer', server)
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        test(){
+            this.socket.emit('test', 'hi');
+        }
     },
     watch: {
         socket: function(){
             this.socket.on('messageToClient', (message) => {
                 this.messages.push(message)
-                console.log('messageToClient')
             })
             this.socket.on('chatHistory', (chatHistory) => {
                 this.messages = chatHistory
-                console.log('Chat History')
             })
         }
     },
@@ -201,7 +232,6 @@ export default {
 .messages {
     flex: 1;
     padding: 20px;
-    /*overflow-y: scroll;*/
 }
 .message-container {
     background-color: #40444b;
@@ -300,6 +330,29 @@ export default {
     background-color: #7289da;
     margin-top: 12px;
     border-radius: 50%;
+    transition: all .2s ease-in-out;
+}
+.server:hover {
+    border-radius: 20px;
+}
+
+/* Rooms CSS */
+
+.rooms {
+    width: 240px;
+    background-color: #2f3136;
+}
+.room {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    color: #ffffff;
+}
+.room-name {
+    padding: 20px 0 0 20px;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 18px;
 }
 
 /* Users CSS */
@@ -311,25 +364,5 @@ export default {
 }
 .user {
     margin-bottom: 10px;
-}
-
-/* Rooms CSS */
-
-.rooms {
-    width: 240px;
-    background-color: #2f3136;
-}
-.room {
-    display: flex;
-
-    align-items: center;
-    padding: 20px;
-    color: #ffffff;
-}
-.room-name {
-    padding: 15px 0 0 15px;
-    color: #ffffff;
-    font-weight: 500;
-    font-size: 18px;
 }
 </style>
