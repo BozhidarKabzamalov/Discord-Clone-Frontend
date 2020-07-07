@@ -1,26 +1,36 @@
 <template>
     <div class="home">
         <div class="servers">
-            <div @click='test()'>
-                TEST
+            <div v-for='(server, index) in servers' class="server-container">
+                <div class="server-active">
+                    <div v-if='selectedServer === index' class="server-active-bar"></div>
+                    <div v-else class="server-inactive-bar"></div>
+                </div>
+                <div class="server" @click='joinServer(server, index)'>
+                    <img class='server-image' :src="server.image" alt="">
+                </div>
             </div>
-            <div @click='newServer()'>
-                New Server
-            </div>
-            <div v-for='(server, index) in servers' class="server" @click='joinServer(server, index)'>
-
+            <div class='add-server' @click='addServerWindow = true'>+</div>
+            <div class='create-server-window' v-if='addServerWindow'>
+                <div class="create-server-form-container">
+                    <form class="create-server-form" @submit='createServer($event)'>
+                        <input v-model="addServerInput.serverName" placeholder="Type a message">
+                        <button type="submit" name="button">Submit</button>
+                    </form>
+                    <div class="black-screen" @click='addServerWindow = false'></div>
+                </div>
             </div>
         </div>
 
         <div class="rooms">
             <div class='room' v-for='(room, index) in servers[selectedServer].rooms' @click='joinRoom(room, index)'>
-                <p>{{ room.name }}</p>
+                <p class='room-name'>{{ room.name }}</p>
             </div>
         </div>
 
         <div class='chat-container'>
             <div class="chat">
-                <p class='room-name'>{{ servers[selectedServer].rooms[selectedServerRoom].name }}</p>
+                <p class='selected-room-name'>{{ servers[selectedServer].rooms[selectedServerRoom].name }}</p>
                 <div class="messages">
                     <div class='message-container' v-for='message in messages'>
                         <div class="username-date-container">
@@ -73,47 +83,7 @@ export default {
         return {
             socket: '',
             users: [],
-            servers: [
-                {
-                    name: 'TFT',
-                    image: 'https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltfe81204b8ec63e0e/5e6184a918d3347ceffbbd6d/TFT.S3_GALAXIES.ARTICLE-2.jpg',
-                    endpoint: '/tft',
-                    rooms: [
-                        {
-                            name: 'General', namespace: 'TFT'
-                        },
-                        {
-                            name: 'Builds', namespace: 'TFT'
-                        },
-                    ]
-                },
-                {
-                    name: 'LoL',
-                    image: 'https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltfe81204b8ec63e0e/5e6184a918d3347ceffbbd6d/TFT.S3_GALAXIES.ARTICLE-2.jpg',
-                    endpoint: '/lol',
-                    rooms: [
-                        {
-                            name: 'General', namespace: 'LoL'
-                        },
-                        {
-                            name: 'Champions', namespace: 'LoL'
-                        },
-                    ]
-                },
-                {
-                    name: 'WoW',
-                    image: 'https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltfe81204b8ec63e0e/5e6184a918d3347ceffbbd6d/TFT.S3_GALAXIES.ARTICLE-2.jpg',
-                    endpoint: '/wow',
-                    rooms: [
-                        {
-                            name: 'General', namespace: 'WoW'
-                        },
-                        {
-                            name: 'PVP', namespace: 'WoW'
-                        },
-                    ]
-                },
-            ],
+            servers: null,
             username: 'Bozhidar',
             messages: [],
             message: '',
@@ -125,7 +95,11 @@ export default {
                 }
             ],
             selectedServer: 0,
-            selectedServerRoom: 0
+            selectedServerRoom: 0,
+            addServerWindow: false,
+            addServerInput: {
+                serverName: ''
+            }
         }
     },
     methods: {
@@ -161,31 +135,33 @@ export default {
 
             return message
         },
-        newServer(){
-            let server =    {
-                                name: 'AOT',
-                                image: 'https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltfe81204b8ec63e0e/5e6184a918d3347ceffbbd6d/TFT.S3_GALAXIES.ARTICLE-2.jpg',
-                                endpoint: '/aot',
-                                rooms: [
-                                    {
-                                        name: 'General', namespace: 'AOT', history: []
-                                    },
-                                    {
-                                        name: 'Titans', namespace: 'AOT', history: []
-                                    },
-                                ]
-                            }
-            this.servers.push(server)
+        getServers(){
+            axios.get('http://localhost:3000/servers')
+            .then((response) => {
+                this.servers = response.data
+                this.socket = io('http://localhost:3000' + this.servers[this.selectedServer].endpoint)
+                this.joinRoom(this.servers[this.selectedServer].rooms[0], 0)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+        },
+        createServer(event){
+            event.preventDefault()
+            let server = {
+                            name: this.addServerInput.serverName,
+                            image: 'https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltfe81204b8ec63e0e/5e6184a918d3347ceffbbd6d/TFT.S3_GALAXIES.ARTICLE-2.jpg'
+                         }
+
+
             axios.post('http://localhost:3000/createServer', server)
             .then((response) => {
-                console.log(response);
+                this.addServerWindow = false;
+                this.servers.push(response.data)
             })
             .catch((error) => {
                 console.log(error);
             });
-        },
-        test(){
-            this.socket.emit('test', 'hi');
         }
     },
     watch: {
@@ -202,8 +178,7 @@ export default {
         if (this.socket) {
             this.socket.close()
         }
-        this.socket = io('http://localhost:3000' + this.servers[this.selectedServer].endpoint)
-        this.joinRoom(this.servers[this.selectedServer].rooms[0], 0)
+        this.getServers();
     }
 }
 </script>
@@ -324,16 +299,103 @@ export default {
     flex-direction: column;
     align-items: center;
 }
+.server-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 12px;
+}
+.server-active {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 48px;
+}
+.server-active-bar {
+    width: 8px;
+    height: 40px;
+    border-radius: 0 4px 4px 0;
+    background-color: #ffffff;
+    margin-left: -4px;
+    transition: all .2s ease-in-out;
+}
+.server-inactive-bar {
+    width: 8px;
+    height: 0px;
+    border-radius: 0 4px 4px 0;
+    background-color: #ffffff;
+    margin-left: -8px;
+    transition: all .2s ease-in-out;
+}
+.server-container:hover .server-inactive-bar {
+    margin-left: -4px;
+    height: 16px;
+}
 .server {
     width: 48px;
     height: 48px;
-    background-color: #7289da;
+    cursor: pointer;
+}
+.server-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.add-server {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    background-color: #36393f;
+    color: #43b581;
+    font-size: 30px;
     margin-top: 12px;
     border-radius: 50%;
     transition: all .2s ease-in-out;
+    cursor: pointer;
 }
-.server:hover {
+.add-server:hover {
     border-radius: 20px;
+    background-color: #43b581;
+    color: #f1f1f1;
+}
+.create-server-window {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.create-server-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.create-server-form {
+    width: 540px;
+    height: 420px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    z-index: 9999;
+}
+.black-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2;
 }
 
 /* Rooms CSS */
@@ -349,6 +411,9 @@ export default {
     color: #ffffff;
 }
 .room-name {
+    cursor: pointer;
+}
+.selected-room-name {
     padding: 20px 0 0 20px;
     color: #ffffff;
     font-weight: 500;
