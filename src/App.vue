@@ -4,6 +4,30 @@
     </div>
 </template>
 
+<script>
+import io from 'socket.io-client'
+
+    export default {
+        computed: {
+            servers(){
+                return this.$store.state.servers
+            },
+            selectedServer(){
+                return this.$store.state.selectedServer
+            }
+        },
+        mounted(){
+            this.$store.dispatch('getServers')
+            .then((result) => {
+                this.$store.commit('socket', io('http://localhost:3000' + this.servers[this.selectedServer].endpoint))
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+        }
+    }
+</script>
+
 <style>
     *, *:after, *:before {
         margin: 0;
