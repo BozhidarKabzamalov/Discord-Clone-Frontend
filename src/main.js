@@ -15,12 +15,7 @@ const store = new Vuex.Store({
         servers: null,
         selectedServer: 0,
         selectedServerRoom: 0,
-        emojis: [
-            {
-                keyword: "LOL",
-                url: "http://localhost:8080/favicon.ico"
-            }
-        ],
+        emoji: null
     },
     mutations: {
         servers(state, servers){
@@ -37,6 +32,9 @@ const store = new Vuex.Store({
         },
         addServer(state, server){
             state.servers.push(server)
+        },
+        emoji(state, emoji){
+            state.emoji = emoji
         }
     },
     actions: {
@@ -48,7 +46,16 @@ const store = new Vuex.Store({
             .catch((error) => {
                 console.log(error);
             })
-        }
+        },
+        getEmoji({commit}){
+            return axios.get("http://localhost:3000/emoji")
+            .then((response) => {
+                commit('emoji', response.data)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        },
     }
 })
 

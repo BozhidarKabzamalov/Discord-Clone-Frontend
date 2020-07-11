@@ -30,10 +30,9 @@ export default {
         createServer(event){
             event.preventDefault()
             let server = {
-                            name: this.addServerInput.name,
-                            image: this.addServerInput.image,
-                         }
-
+                name: this.addServerInput.name,
+                image: this.addServerInput.image,
+            }
 
             axios.post('http://localhost:3000/createServer', server)
             .then((response) => {

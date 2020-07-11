@@ -19,14 +19,14 @@
                 </form>
 
                 <div class="emojis-container" v-if='toggleEmojiWindow'>
-                    <div class="emoji" v-for='emoji in this.emojis' @click='message += emoji.keyword + " "'>
+                    <div class="emoji" v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
                         <img class='responsive-image' :src="emoji.url" :alt="emoji.keyword">
                     </div>
                 </div>
 
                 <div class="emojis">
                     <div class="emojis-button" @click='toggleEmojiWindow = !toggleEmojiWindow'>
-                        <img class='responsive-image' :src="this.emojis[0].url" :alt="this.emojis[0].keyword">
+                        <img class='responsive-image' :src="this.emoji[0].url" :alt="this.emoji[0].keyword">
                     </div>
                 </div>
 
@@ -54,7 +54,7 @@ export default {
             event.preventDefault()
             let fullMessage = {
                 username: this.username,
-                message: this.insertEmojis(this.message),
+                message: this.insertEmoji(this.message),
                 time: Date.now()
             }
             this.socket.emit('messageToServer', fullMessage)
@@ -63,8 +63,8 @@ export default {
         getTimeAndDate(timestamp){
             return moment(timestamp).subtract(10, 'days').calendar();
         },
-        insertEmojis(message){
-            this.emojis.forEach(emoji => {
+        insertEmoji(message){
+            this.emoji.forEach(emoji => {
                 message = message.replace(new RegExp("(?:^|\\s)"+ emoji.keyword + "\\b", "g"), `<span class="${emoji.keyword}"><img src="${emoji.url}" alt="${emoji.keyword}"></span>`)
             })
 
@@ -87,8 +87,8 @@ export default {
         selectedServerRoom(){
             return this.$store.state.selectedServerRoom
         },
-        emojis(){
-            return this.$store.state.emojis
+        emoji(){
+            return this.$store.state.emoji
         }
     },
     watch: {
