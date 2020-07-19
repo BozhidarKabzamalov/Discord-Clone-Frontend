@@ -10,7 +10,9 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
-        username: 'Bozhidar',
+        token: null,
+        username: null,
+        userId: null,
         socket: null,
         servers: null,
         selectedServer: 0,
@@ -35,6 +37,19 @@ const store = new Vuex.Store({
         },
         emoji(state, emoji){
             state.emoji = emoji
+        },
+        authUser(state, userData){
+            state.token = userData.token
+            state.userId = userData.userId
+            state.username = userData.username
+            localStorage.setItem('token', userData.token);
+            localStorage.setItem('userId', userData.userId);
+            localStorage.setItem('username', userData.username);
+        },
+        clearAuthUser(state){
+            state.token = null;
+            state.userId = null;
+            state.username = null;
         }
     },
     actions: {
@@ -56,6 +71,57 @@ const store = new Vuex.Store({
                 console.log(error);
             })
         },
+        register({commit}, data){
+            axios.post('http://localhost:3000/register', {
+                username: data.username,
+                password: data.password,
+                email: data.email
+            })
+            .then(response => {
+                commit('authUser', {
+                    token: response.data.token,
+                    userId: response.data.userId,
+                    username: response.data.username
+                })
+                router.replace('/')
+            });
+        },
+        login({commit}, userInfo){
+            axios.post('http://localhost:3000/login', userInfo)
+            .then(response => {
+                commit('authUser', {
+                    token: response.data.token,
+                    userId: response.data.userId,
+                    username: response.data.username
+                })
+                router.replace('/')
+            }).catch((error) => console.log(error));
+        },
+        autoLogin({commit}, data){
+            const token = localStorage.getItem('token')
+            const userId = localStorage.getItem('userId')
+            const username = localStorage.getItem('username')
+            if (!token) {
+                return
+            }
+            commit('authUser', {
+                token: token,
+                userId: userId,
+                username: username
+            })
+        },
+        logout({commit}){
+            commit('clearAuthUser')
+            localStorage.removeItem('token')
+            localStorage.removeItem('userId')
+            localStorage.removeItem('username')
+            router.replace('/login')
+        }
+    },
+    getters: {
+        isAuthenticated(state){
+            return state.token !== null
+        }
     }
 })
 

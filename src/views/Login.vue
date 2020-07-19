@@ -8,10 +8,6 @@
                     <input v-model='email' type='email'>
                 </div>
                 <div class="margin-bottom-20">
-                    <p>Username</p>
-                    <input v-model='username' type='text'>
-                </div>
-                <div class="margin-bottom-20">
                     <p>Password</p>
                     <input v-model='password' type="password">
                 </div>
@@ -28,18 +24,16 @@ export default {
     data(){
         return {
             email: '',
-            username: '',
             password: '',
         }
     },
     methods: {
         onSubmit(){
             let userInfo = {
-                username: this.username,
                 password: this.password,
                 email: this.email
             }
-            this.$store.dispatch('register', userInfo)
+            this.$store.dispatch('login', userInfo)
         }
     }
 }

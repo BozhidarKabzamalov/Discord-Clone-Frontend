@@ -20,13 +20,13 @@
 
                 <div class="emojis-container" v-if='toggleEmojiWindow'>
                     <div class="emoji" v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
-                        <img class='responsive-image' :src="emoji.url" :alt="emoji.keyword">
+                        <img class='responsive-image' :src="emoji.image" :alt="emoji.keyword" @click='toggleEmojiWindow = !toggleEmojiWindow'>
                     </div>
                 </div>
 
                 <div class="emojis">
                     <div class="emojis-button" @click='toggleEmojiWindow = !toggleEmojiWindow'>
-                        <img class='responsive-image' :src="this.emoji[0].url" :alt="this.emoji[0].keyword">
+                        <img class='responsive-image' :src="this.emoji[0].image" :alt="this.emoji[0].keyword">
                     </div>
                 </div>
 
@@ -65,7 +65,7 @@ export default {
         },
         insertEmoji(message){
             this.emoji.forEach(emoji => {
-                message = message.replace(new RegExp("(?:^|\\s)"+ emoji.keyword + "\\b", "g"), `<span class="${emoji.keyword}"><img src="${emoji.url}" alt="${emoji.keyword}"></span>`)
+                message = message.replace(new RegExp("(?:^|\\s)"+ emoji.keyword + "\\b", "g"), `<span class="${emoji.keyword}"><img src="${emoji.image}" alt="${emoji.keyword}"></span>`)
             })
 
             return message

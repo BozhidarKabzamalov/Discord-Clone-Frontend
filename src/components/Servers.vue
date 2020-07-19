@@ -6,7 +6,7 @@
                 <div v-else class="server-inactive-bar"></div>
             </div>
             <div class="server" @click='joinServer(server, index)'>
-                <img class='server-image' :src="server.image" alt="">
+                <img class='server-image' :src="server.thumbnail" alt="">
             </div>
         </div>
         <AddServer></AddServer>
