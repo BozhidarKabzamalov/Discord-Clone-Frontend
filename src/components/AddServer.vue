@@ -22,7 +22,7 @@ export default {
             addServerWindow: false,
             addServerInput: {
                 name: '',
-                image: 'https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltfe81204b8ec63e0e/5e6184a918d3347ceffbbd6d/TFT.S3_GALAXIES.ARTICLE-2.jpg'
+                image: 'https://media.discordapp.net/attachments/733747075455647898/733748917274935426/1.png?width=676&height=676'
             }
         }
     },

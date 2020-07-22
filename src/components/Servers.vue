@@ -15,7 +15,6 @@
 
 <script>
 import AddServer from './AddServer'
-import io from 'socket.io-client'
 
 export default {
     components: {
@@ -23,27 +22,18 @@ export default {
     },
     methods: {
         joinServer(server, index){
-            this.$store.commit('selectedServer', index)
-            this.$store.commit('socket', io('http://localhost:3000' + server.endpoint))
-            this.joinRoom(server.rooms[0], 0)
-        },
-        joinRoom(room, index){
-            this.$store.commit('selectedServerRoom', index)
-            this.socket.emit('joinRoom', room.name)
+            this.$store.dispatch('joinServer', {
+                server: server,
+                index: index
+            })
         }
     },
     computed: {
-        socket(){
-            return this.$store.state.socket
-        },
         servers(){
             return this.$store.state.servers
         },
         selectedServer(){
             return this.$store.state.selectedServer
-        },
-        selectedServerRoom(){
-            return this.$store.state.selectedServerRoom
         }
     }
 }

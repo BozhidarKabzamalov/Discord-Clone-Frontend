@@ -5,19 +5,10 @@
 </template>
 
 <script>
-import io from 'socket.io-client'
-
 export default {
     mounted(){
+        this.$store.dispatch('autoLogin');
         this.$store.dispatch('getEmoji')
-        this.$store.dispatch('getServers')
-        .then(result => {
-            this.$store.commit('socket', io('http://localhost:3000' + this.$store.state.servers[this.$store.state.selectedServer].endpoint))
-            this.$store.state.socket.emit('joinRoom', this.$store.state.servers[this.$store.state.selectedServer].rooms[0].name)
-        })
-        .catch(error => {
-            console.log(error)
-        })
     }
 }
 </script>

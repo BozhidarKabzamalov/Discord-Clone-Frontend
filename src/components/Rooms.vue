@@ -10,14 +10,13 @@
 export default {
     methods: {
         joinRoom(room, index){
-            this.$store.commit('selectedServerRoom', index)
-            this.socket.emit('joinRoom', room.name)
+            this.$store.dispatch('joinRoom', {
+                room: room,
+                index: index
+            })
         },
     },
     computed: {
-        socket(){
-            return this.$store.state.socket
-        },
         servers(){
             return this.$store.state.servers
         },

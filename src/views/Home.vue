@@ -19,6 +19,9 @@ export default {
         Rooms,
         Chat,
         Users
+    },
+    created(){
+        this.$store.dispatch('getUserServers', localStorage.userId)
     }
 }
 </script>
