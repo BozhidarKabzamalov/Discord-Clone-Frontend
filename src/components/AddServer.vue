@@ -32,6 +32,7 @@ export default {
             let server = {
                 name: this.addServerInput.name,
                 image: this.addServerInput.image,
+                userId: localStorage.userId
             }
 
             axios.post('http://localhost:3000/createServer', server)

@@ -13,8 +13,8 @@ const store = new Vuex.Store({
         userId: null,
         socket: null,
         servers: null,
-        selectedServer: 0,
-        selectedServerRoom: 0,
+        selectedServer: null,
+        selectedServerRoom: null,
         emoji: null
     },
     mutations: {
@@ -28,7 +28,7 @@ const store = new Vuex.Store({
             state.selectedServer = selectedServer
         },
         selectedServerRoom(state, selectedServerRoom){
-            state.selectedRoom = selectedServerRoom
+            state.selectedServerRoom = selectedServerRoom
         },
         addServer(state, server){
             state.servers.push(server)
@@ -55,19 +55,24 @@ const store = new Vuex.Store({
     },
     actions: {
         joinServer({commit, dispatch, state}, server){
-            if (state.socket) {
-                state.socket.close()
+            if (state.selectedServer != server.index) {
+                if (state.socket) {
+                    state.socket.close()
+                }
+                commit('selectedServer', server.index)
+                commit('selectedServerRoom', null)
+                commit('socket', io('http://localhost:3000' + server.server.endpoint))
+                dispatch('joinRoom', {
+                    room: server.server.rooms[0],
+                    index: 0
+                })
             }
-            commit('selectedServer', server.index)
-            commit('socket', io('http://localhost:3000' + server.server.endpoint))
-            dispatch('joinRoom', {
-                room: server.server.rooms[0],
-                index: 0
-            })
         },
-        joinRoom({commit, state,}, room){
-            commit('selectedServerRoom', room.index)
-            state.socket.emit('joinRoom', room.room.name)
+        joinRoom({commit, state}, room){
+            if (state.selectedServerRoom != room.index) {
+                commit('selectedServerRoom', room.index)
+                state.socket.emit('joinRoom', room.room.name)
+            }
         },
         getUserServers({commit, state, dispatch}, userId){
             return axios.get("http://localhost:3000/servers/" + userId)
