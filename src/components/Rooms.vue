@@ -12,7 +12,8 @@ export default {
         joinRoom(room, index){
             this.$store.dispatch('joinRoom', {
                 room: room,
-                index: index
+                index: index,
+                serverId: this.servers[this.selectedServer].id
             })
         },
     },
@@ -37,8 +38,9 @@ export default {
     align-items: center;
     padding: 20px;
     color: #ffffff;
-}
-.room-name {
     cursor: pointer;
+}
+.room:hover {
+    background-color: #34373c;
 }
 </style>

@@ -63,6 +63,7 @@ const store = new Vuex.Store({
                 commit('selectedServerRoom', null)
                 commit('socket', io('http://localhost:3000' + server.server.endpoint))
                 dispatch('joinRoom', {
+                    serverId: server.server.id,
                     room: server.server.rooms[0],
                     index: 0
                 })
@@ -71,7 +72,10 @@ const store = new Vuex.Store({
         joinRoom({commit, state}, room){
             if (state.selectedServerRoom != room.index) {
                 commit('selectedServerRoom', room.index)
-                state.socket.emit('joinRoom', room.room.name)
+                state.socket.emit('joinRoom', {
+                    roomName: room.room.name,
+                    serverId: room.serverId
+                })
             }
         },
         getUserServers({commit, state, dispatch}, userId){

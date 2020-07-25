@@ -3,7 +3,7 @@
         <div class="chat">
             <p class='selected-room-name'>{{ servers[selectedServer].rooms[selectedServerRoom].name }}</p>
             <div class="messages">
-                <div class='message-container' v-for='message in messages'>
+                <div class='message-container' v-for='message in servers[selectedServer].rooms[selectedServerRoom].messages'>
                     <div class="username-date-container">
                         <p class='username'>{{ message.username }}</p>
                         <p class='date'>{{ getTimeAndDate(message.time) }}</p>
@@ -40,11 +40,11 @@
 
 <script>
 import moment from 'moment'
+import axios from 'axios'
 
 export default {
     data(){
         return {
-            messages: [],
             message: '',
             toggleEmojiWindow: false
         }
@@ -53,10 +53,18 @@ export default {
         sendMessage(event){
             event.preventDefault()
             let fullMessage = {
+                roomId: this.servers[this.selectedServer].rooms[this.selectedServerRoom].id,
                 username: this.username,
+                userId: this.userId,
                 message: this.insertEmoji(this.message),
                 time: Date.now()
             }
+
+            axios.post('http://localhost:3000/message', fullMessage)
+            .then(response => {
+                console.log(response)
+            }).catch((error) => console.log(error));
+
             this.socket.emit('messageToServer', fullMessage)
             this.message = ''
         },
@@ -74,6 +82,9 @@ export default {
     computed: {
         username(){
             return this.$store.state.username
+        },
+        userId(){
+            return this.$store.state.userId
         },
         socket(){
             return this.$store.state.socket
@@ -94,10 +105,10 @@ export default {
     watch: {
         socket: function(){
             this.socket.on('messageToClient', (message) => {
-                this.messages.push(message)
+                this.servers[this.selectedServer].rooms[this.selectedServerRoom].messages.push(message)
             })
             this.socket.on('chatHistory', (chatHistory) => {
-                this.messages = chatHistory
+                this.servers[this.selectedServer].rooms[this.selectedServerRoom].messages = chatHistory
             })
         }
     }

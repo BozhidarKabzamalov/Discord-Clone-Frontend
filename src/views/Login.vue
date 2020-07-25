@@ -1,8 +1,8 @@
 <template lang="html">
     <div class="register">
         <div class="register-container">
-            <p>Create an account</p>
-            <form @submit.prevent="onSubmit">
+            <p>Welcome back!</p>
+            <form @submit.prevent="onSubmit" novalidate>
                 <div class="margin-bottom-20">
                     <p>Email</p>
                     <input v-model='email' type='email'>
