@@ -1,5 +1,6 @@
 <template lang="html">
     <div class="rooms" v-if='servers'>
+        <div class='room' v-if='userId == servers[selectedServer].userId' @click='createRoom()'>Add Room</div>
         <div class='room' v-for='(room, index) in servers[selectedServer].rooms' @click='joinRoom(room, index)'>
             <p class='room-name'>{{ room.name }}</p>
         </div>
@@ -7,6 +8,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     methods: {
         joinRoom(room, index){
@@ -16,6 +19,9 @@ export default {
                 serverId: this.servers[this.selectedServer].id
             })
         },
+        createRoom(){
+
+        }
     },
     computed: {
         servers(){
@@ -23,6 +29,9 @@ export default {
         },
         selectedServer(){
             return this.$store.state.selectedServer
+        },
+        userId(){
+            return this.$store.state.userId
         }
     }
 }

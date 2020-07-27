@@ -79,7 +79,7 @@ const store = new Vuex.Store({
             }
         },
         getUserServers({commit, state, dispatch}, userId){
-            return axios.get("http://localhost:3000/servers/" + userId)
+            return axios.get("/servers/" + userId)
             .then((response) => {
                 state.servers = response.data.servers
                 dispatch('joinServer', {
@@ -92,7 +92,7 @@ const store = new Vuex.Store({
             })
         },
         getEmoji({commit}){
-            return axios.get("http://localhost:3000/emoji")
+            return axios.get("/emoji")
             .then((response) => {
                 commit('emoji', response.data)
             })
@@ -101,7 +101,7 @@ const store = new Vuex.Store({
             })
         },
         register({commit, dispatch}, data){
-            axios.post('http://localhost:3000/register', {
+            axios.post('/register', {
                 username: data.username,
                 password: data.password,
                 email: data.email
@@ -116,7 +116,7 @@ const store = new Vuex.Store({
             });
         },
         login({commit, dispatch}, userInfo){
-            axios.post('http://localhost:3000/login', userInfo)
+            axios.post('/login', userInfo)
             .then(response => {
                 commit('authUser', {
                     token: response.data.token,

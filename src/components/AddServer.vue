@@ -22,7 +22,7 @@ export default {
             addServerWindow: false,
             addServerInput: {
                 name: '',
-                image: 'https://media.discordapp.net/attachments/733747075455647898/733748917274935426/1.png?width=676&height=676'
+                image: 'https://media.discordapp.net/attachments/733747075455647898/733748919296851971/2.jpg?width=677&height=677'
             }
         }
     },
@@ -35,7 +35,7 @@ export default {
                 userId: localStorage.userId
             }
 
-            axios.post('http://localhost:3000/createServer', server)
+            axios.post('/createServer', server)
             .then((response) => {
                 this.addServerWindow = false;
                 this.$store.commit('addServer', response.data)

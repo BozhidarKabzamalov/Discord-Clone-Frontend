@@ -8,7 +8,7 @@
                         <p class='username'>{{ message.username }}</p>
                         <p class='date'>{{ getTimeAndDate(message.time) }}</p>
                     </div>
-                    <p v-html="message.message"></p>
+                    <p class='message' v-html="message.message"></p>
                 </div>
             </div>
 
@@ -18,17 +18,17 @@
                     <input class='message-input' v-model="message" placeholder="Type a message">
                 </form>
 
-                <!--<div class="emojis-container" v-if='toggleEmojiWindow'>
-                    <div class="emoji" v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
+                <div class="emojis-picker-container" v-if='toggleEmojiWindow'>
+                    <div class="emoji" v-if='emoji' v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
                         <img class='responsive-image' :src="emoji.image" :alt="emoji.keyword" @click='toggleEmojiWindow = !toggleEmojiWindow'>
                     </div>
                 </div>
 
-                <div class="emojis">
+                <div class="emojis-button-container">
                     <div class="emojis-button" @click='toggleEmojiWindow = !toggleEmojiWindow'>
                         <img class='responsive-image' :src="this.emoji[0].image" :alt="this.emoji[0].keyword">
                     </div>
-                </div>-->
+                </div>
 
             </div>
 
@@ -52,6 +52,7 @@ export default {
     methods: {
         sendMessage(event){
             event.preventDefault()
+
             let fullMessage = {
                 roomId: this.servers[this.selectedServer].rooms[this.selectedServerRoom].id,
                 username: this.username,
@@ -60,7 +61,7 @@ export default {
                 time: Date.now()
             }
 
-            axios.post('http://localhost:3000/message', fullMessage)
+            axios.post('/message', fullMessage)
             .then(response => {
                 console.log(response)
             }).catch((error) => console.log(error));
@@ -73,7 +74,7 @@ export default {
         },
         insertEmoji(message){
             this.emoji.forEach(emoji => {
-                message = message.replace(new RegExp("(?:^|\\s)"+ emoji.keyword + "\\b", "g"), `<span class="${emoji.keyword}"><img src="${emoji.image}" alt="${emoji.keyword}"></span>`)
+                message = message.replace(new RegExp("(?:^|\\s)"+ emoji.keyword + "\\b", "g"), `<span class="emoji ${emoji.keyword}"><img class='responsive-image' src="${emoji.image}" alt="${emoji.keyword}"></span>`)
             })
 
             return message
@@ -135,6 +136,10 @@ export default {
     flex: 1;
     padding: 20px;
 }
+.message {
+    display: flex;
+    align-items: center;
+}
 .message-container {
     background-color: #40444b;
     padding: 15px;
@@ -165,7 +170,7 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.emojis {
+.emojis-button-container {
     position: relative;
     margin-right: 20px;
     background-color: #40444b;
@@ -202,7 +207,7 @@ export default {
     filter: grayscale(0%);
     transform: scale(1.1);
 }
-.emojis-container {
+.emojis-picker-container {
     position: absolute;
     top: -200px;
     right: 0;
@@ -211,9 +216,5 @@ export default {
     padding: 10px;
     display: flex;
     background-color: #2f3136;
-}
-.emoji {
-    height: 30px;
-    width: 30px;
 }
 </style>

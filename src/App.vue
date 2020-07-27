@@ -29,4 +29,9 @@ body {
     width: 100%;
     height: 100%;
 }
+.emoji {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+}
 </style>
