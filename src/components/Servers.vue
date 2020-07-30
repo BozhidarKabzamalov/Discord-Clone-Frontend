@@ -15,6 +15,7 @@
 
 <script>
 import AddServer from './AddServer'
+import axios from 'axios'
 
 export default {
     components: {
@@ -25,6 +26,15 @@ export default {
             this.$store.dispatch('joinServer', {
                 server: server,
                 index: index
+            })
+        },
+        deleteServer(server, index){
+            axios.post('/deleteServer', server)
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
             })
         }
     },

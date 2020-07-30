@@ -1,12 +1,19 @@
 <template lang="html">
     <div class="users">
-        <p class='user' v-for='user in users'>{{ user }}</p>
+        <p :class="[{ 'owner': servers[selectedServer].userId == user.id}, 'user']" v-for='user in servers[selectedServer].users'>{{ user.username }}</p>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['users']
+    computed: {
+        servers(){
+            return this.$store.state.servers
+        },
+        selectedServer(){
+            return this.$store.state.selectedServer
+        }
+    }
 }
 </script>
 
@@ -14,9 +21,13 @@ export default {
 .users {
     width: 239px;
     background-color: #2f3136;
-    padding: 15px;
 }
 .user {
-    margin-bottom: 10px;
+    font-weight: 500;
+    color: #8e9297;
+    padding: 30px 20px 0 20px;
+}
+.owner::after {
+    content: " - Owner"
 }
 </style>

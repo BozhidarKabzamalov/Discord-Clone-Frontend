@@ -61,7 +61,7 @@ export default {
                 time: Date.now()
             }
 
-            axios.post('/message', fullMessage)
+            axios.post('/createMessage', fullMessage)
             .then(response => {
                 console.log(response)
             }).catch((error) => console.log(error));
@@ -127,10 +127,11 @@ export default {
     background-color: #36393f;
 }
 .selected-room-name {
-    padding: 20px 0 0 20px;
+    padding: 20px;
     color: #ffffff;
     font-weight: 500;
-    font-size: 18px;
+    font-size: 16px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
 }
 .messages {
     flex: 1;

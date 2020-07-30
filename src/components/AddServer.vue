@@ -4,8 +4,11 @@
         <div class='create-server-window' v-if='addServerWindow'>
             <div class="create-server-form-container">
                 <form class="create-server-form" @submit='createServer($event)'>
-                    <input v-model="addServerInput.name" placeholder="Type a message">
-                    <button type="submit" name="button">Submit</button>
+                    <h1>create your own server</h1>
+                    <p>Make a place for you to hang out with your friends.</p>
+                    <label :for="addServerInput.name">server name</label>
+                    <input v-model="addServerInput.name" placeholder="Enter a server name">
+                    <button type="submit" name="button">Create</button>
                 </form>
                 <div class="black-screen" @click='addServerWindow = false'></div>
             </div>
@@ -85,11 +88,53 @@ export default {
     position: relative;
 }
 .create-server-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     width: 540px;
     height: 420px;
     background-color: #ffffff;
     border-radius: 4px;
     z-index: 9999;
+    padding: 40px;
+}
+.create-server-form button {
+    width: 100px;
+    height: 40px;
+    background-color: #7289da;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.create-server-form h1 {
+    font-weight: 700;
+    font-size: 20px;
+    color: #7289da;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+.create-server-form p {
+    color: #747f8d;
+    font-size: 16px;
+    margin-bottom: 60px;
+}
+.create-server-form label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4f5660;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.create-server-form input {
+    color: #2f3136;
+    font-size: 16px;
+    margin-bottom: 60px;
+    padding: 12px 4px;
+    border: none;
+    border-bottom: 2px solid #e3e5e8;
+    outline: none;
 }
 .black-screen {
     position: absolute;
