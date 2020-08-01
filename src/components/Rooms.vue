@@ -3,9 +3,13 @@
 
         <div class="selected-server">
             <p class='selected-server-name'>{{ servers[selectedServer].name }}</p>
+            <ServerSettings></ServerSettings>
         </div>
 
-        <!--<CreateRoom></CreateRoom>-->
+        <div class="text-channels-container">
+            <h2 class='text-channels'>Rooms</h2>
+            <CreateRoom></CreateRoom>
+        </div>
 
         <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in servers[selectedServer].rooms' @click='joinRoom(room, index)'>
             <p class='room-name'>{{ room.name }}</p>
@@ -16,11 +20,13 @@
 
 <script>
 import CreateRoom from './CreateRoom'
+import ServerSettings from './ServerSettings'
 import axios from 'axios'
 
 export default {
     components: {
-        CreateRoom
+        CreateRoom,
+        ServerSettings
     },
     methods: {
         joinRoom(room, index){
@@ -49,6 +55,9 @@ export default {
         },
         selectedServerRoom(){
             return this.$store.state.selectedServerRoom
+        },
+        userId(){
+            return this.$store.state.userId
         }
     }
 }
@@ -58,6 +67,21 @@ export default {
 .rooms {
     width: 240px;
     background-color: #2f3136;
+}
+.text-channels-container {
+    display: flex;
+    align-items: center;
+}
+.text-channels {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-transform: uppercase;
+    padding: 20px;
+    line-height: 16px;
+    color: #8e9297;
+    font-size: 13px;
+    font-weight: 700;
 }
 .room {
     font-weight: 700;
@@ -88,9 +112,5 @@ export default {
 .selected-server-name {
     color: rgba(255, 255, 255, 0.9);
     font-weight: 600;
-}
-.delete-room {
-    display: none;
-    margin: 0 0 0 auto;
 }
 </style>

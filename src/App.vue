@@ -25,6 +25,9 @@ export default {
 body {
     font-family: 'Roboto', 'Helvetica', 'Helvetica Neue', 'Arial', sans-serif;
 }
+.flex {
+    display: flex;
+}
 .responsive-image {
     width: 100%;
     height: 100%;
