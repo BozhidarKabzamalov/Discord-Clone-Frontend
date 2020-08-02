@@ -1,6 +1,6 @@
 <template lang="html">
     <div class='server-settings'>
-        <img class='toggle-server-settings' src="@/assets/svg/cog.svg" alt="cog" @click='serverSettingsWindow = true'>
+        <i class="toggle-server-settings fas fa-cog" @click='serverSettingsWindow = true'></i>
         <div class="settings" v-if='serverSettingsWindow'>
             <div class="server-overview">
                 <h1>Server Overview</h1>
@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <div class="update-server" @click='updateServer()'>Save Changes</div>
-                <img class="exit" src="@/assets/svg/x.svg" alt="x" @click='serverSettingsWindow = false'>
+                <i class="exit fas fa-times" @click='serverSettingsWindow = false'></i>
             </div>
         </div>
     </div>
@@ -60,9 +60,8 @@ export default {
     margin-left: auto;
 }
 .toggle-server-settings {
-    height: 19px;
-    width: auto;
     cursor: pointer;
+    color: #b9bbbe;
 }
 .settings {
     position: fixed;
@@ -82,7 +81,8 @@ export default {
     padding: 60px;
 }
 .exit {
-    width: 50px;
+    color: #dcddde;
+    font-size: 30px;
     position: absolute;
     top: 0;
     right: 0;

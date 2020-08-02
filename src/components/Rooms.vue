@@ -12,6 +12,7 @@
         </div>
 
         <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in servers[selectedServer].rooms' @click='joinRoom(room, index)'>
+            <i class="hashtag fas fa-hashtag"></i>
             <p class='room-name'>{{ room.name }}</p>
         </div>
 
@@ -71,16 +72,16 @@ export default {
 .text-channels-container {
     display: flex;
     align-items: center;
+    padding: 20px 0;
 }
 .text-channels {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     text-transform: uppercase;
-    padding: 20px;
-    line-height: 16px;
+    padding: 0px 20px;
     color: #8e9297;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
 }
 .room {
@@ -112,5 +113,8 @@ export default {
 .selected-server-name {
     color: rgba(255, 255, 255, 0.9);
     font-weight: 600;
+}
+.hashtag {
+    margin-right: 5px;
 }
 </style>

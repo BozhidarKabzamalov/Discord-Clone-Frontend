@@ -14,6 +14,8 @@ export default {
 </script>
 
 <style>
+@import "../node_modules/@fortawesome/fontawesome-free/css/all.css";
+
 *, *:after, *:before {
     margin: 0;
     padding: 0;

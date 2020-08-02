@@ -1,6 +1,8 @@
 <template lang="html">
     <div>
-        <div class='add-server' @click='addServerWindow = true'>+</div>
+        <div class='add-server' @click='addServerWindow = true'>
+            <i class="fas fa-plus"></i>
+        </div>
         <div class='create-server-window' v-if='addServerWindow'>
             <div class="create-server-form-container">
                 <form class="create-server-form" @submit='createServer($event)'>
@@ -60,7 +62,6 @@ export default {
     height: 48px;
     background-color: #36393f;
     color: #43b581;
-    font-size: 30px;
     margin-top: 12px;
     border-radius: 50%;
     transition: all .2s ease-in-out;

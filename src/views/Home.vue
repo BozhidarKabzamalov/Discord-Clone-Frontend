@@ -3,7 +3,7 @@
         <Servers></Servers>
         <Rooms></Rooms>
         <Chat></Chat>
-        <Users></Users>
+        <Members></Members>
     </div>
 </template>
 
@@ -11,14 +11,14 @@
 import Servers from '../components/Servers'
 import Rooms from '../components/Rooms'
 import Chat from '../components/Chat'
-import Users from '../components/Users'
+import Members from '../components/Members'
 
 export default {
     components: {
         Servers,
         Rooms,
         Chat,
-        Users
+        Members
     },
     created(){
         this.$store.dispatch('getUserServers', localStorage.userId)
