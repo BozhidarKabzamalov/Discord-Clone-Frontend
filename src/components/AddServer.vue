@@ -6,10 +6,11 @@
         <div class='create-server-window' v-if='addServerWindow'>
             <div class="create-server-form-container">
                 <form class="create-server-form" @submit='createServer($event)'>
-                    <h1>create your own server</h1>
+                    <h1>Create your own server</h1>
                     <p>Make a place for you to hang out with your friends.</p>
                     <label :for="addServerInput.name">server name</label>
                     <input v-model="addServerInput.name" placeholder="Enter a server name">
+                    <input type="file" name="image" @change="handleFileUpload($event)">
                     <button type="submit" name="button">Create</button>
                 </form>
                 <div class="black-screen" @click='addServerWindow = false'></div>
@@ -27,18 +28,27 @@ export default {
             addServerWindow: false,
             addServerInput: {
                 name: '',
-                image: 'https://media.discordapp.net/attachments/733747075455647898/733748919296851971/2.jpg?width=677&height=677'
+                image: 'https://media.discordapp.net/attachments/733747075455647898/733748919296851971/2.jpg?width=677&height=677',
+                file: ''
             }
         }
     },
     methods: {
+        handleFileUpload(event){
+            this.addServerInput.file = event.target.files[0]
+        },
         createServer(event){
             event.preventDefault()
-            let server = {
+            let server = new FormData()
+            server.append('name', this.addServerInput.name)
+            server.append('image', this.addServerInput.file)
+            server.append('userId', localStorage.userId)
+
+            /*let server = {
                 name: this.addServerInput.name,
                 image: this.addServerInput.image,
                 userId: localStorage.userId
-            }
+            }*/
 
             axios.post('/createServer', server)
             .then((response) => {
@@ -94,7 +104,6 @@ export default {
     align-items: center;
     flex-direction: column;
     width: 540px;
-    height: 420px;
     background-color: #ffffff;
     border-radius: 4px;
     z-index: 9999;
