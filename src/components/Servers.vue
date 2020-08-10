@@ -6,7 +6,7 @@
                 <div v-else class="server-inactive-bar"></div>
             </div>
             <div class="server" @click='joinServer(server, index)'>
-                <img class='server-image' :src="server.thumbnail" alt="">
+                <img class='server-image' :src="server.path + 'original-' + server.thumbnail" alt="">
             </div>
         </div>
         <AddServer></AddServer>
@@ -26,15 +26,6 @@ export default {
             this.$store.dispatch('joinServer', {
                 server: server,
                 index: index
-            })
-        },
-        deleteServer(server, index){
-            axios.post('/deleteServer', server)
-            .then(response => {
-                console.log(response)
-            })
-            .catch(error => {
-                console.log(error)
             })
         }
     },

@@ -12,7 +12,7 @@ const store = new Vuex.Store({
         username: null,
         userId: null,
         socket: null,
-        servers: null,
+        servers: [],
         selectedServer: null,
         selectedServerRoom: null,
         emoji: null
@@ -32,6 +32,10 @@ const store = new Vuex.Store({
         },
         addServer(state, server){
             state.servers.push(server)
+        },
+        deleteServer(state, server){
+            let index = state.servers.indexOf(server)
+            state.servers.splice(index, 1)
         },
         emoji(state, emoji){
             state.emoji = emoji
@@ -82,10 +86,12 @@ const store = new Vuex.Store({
             return axios.get("/servers/" + userId)
             .then((response) => {
                 state.servers = response.data.servers
-                dispatch('joinServer', {
-                    server: state.servers[0],
-                    index: 0
-                })
+                if (response.data.servers.length) {
+                    dispatch('joinServer', {
+                        server: state.servers[0],
+                        index: 0
+                    })
+                }
             })
             .catch((error) => {
                 console.log(error);

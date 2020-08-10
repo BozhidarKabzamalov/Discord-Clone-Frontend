@@ -15,6 +15,9 @@
                 </div>
                 <div class="update-server" @click='updateServer()'>Save Changes</div>
                 <i class="exit fas fa-times" @click='serverSettingsWindow = false'></i>
+                <div class="" @click='deleteServer(selectedServer)'>
+                    Delete Server
+                </div>
             </div>
         </div>
     </div>
@@ -41,6 +44,16 @@ export default {
             axios.post('/updateServer', data)
             .then(result => {
                 console.log(result)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
+        deleteServer(server){
+            axios.post('/deleteServer', server)
+            .then(response => {
+                this.$store.commit('deleteServer', server)
+                console.log(response)
             })
             .catch(error => {
                 console.log(error)

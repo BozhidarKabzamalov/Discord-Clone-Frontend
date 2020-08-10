@@ -39,21 +39,22 @@ export default {
         },
         createServer(event){
             event.preventDefault()
+
             let server = new FormData()
             server.append('name', this.addServerInput.name)
             server.append('image', this.addServerInput.file)
             server.append('userId', localStorage.userId)
 
-            /*let server = {
-                name: this.addServerInput.name,
-                image: this.addServerInput.image,
-                userId: localStorage.userId
-            }*/
-
             axios.post('/createServer', server)
             .then((response) => {
                 this.addServerWindow = false;
                 this.$store.commit('addServer', response.data)
+                let servers = this.$store.state.servers
+                let data = {
+                    index: servers.length - 1,
+                    server: response.data
+                }
+                this.$store.dispatch('joinServer', data)
             })
             .catch((error) => {
                 console.log(error);

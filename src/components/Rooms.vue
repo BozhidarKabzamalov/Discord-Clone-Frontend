@@ -1,21 +1,19 @@
 <template lang="html">
-    <div class="rooms" v-if='servers'>
-
-        <div class="selected-server">
-            <p class='selected-server-name'>{{ servers[selectedServer].name }}</p>
-            <ServerSettings></ServerSettings>
+    <div class="rooms">
+        <div v-if='servers.length'>
+            <div class="selected-server">
+                <p class='selected-server-name'>{{ servers[selectedServer].name }}</p>
+                <ServerSettings></ServerSettings>
+            </div>
+            <div class="text-channels-container">
+                <h2 class='text-channels'>Rooms</h2>
+                <CreateRoom></CreateRoom>
+            </div>
+            <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in servers[selectedServer].rooms' @click='joinRoom(room, index)'>
+                <i class="hashtag fas fa-hashtag"></i>
+                <p>{{ room.name }}</p>
+            </div>
         </div>
-
-        <div class="text-channels-container">
-            <h2 class='text-channels'>Rooms</h2>
-            <CreateRoom></CreateRoom>
-        </div>
-
-        <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in servers[selectedServer].rooms' @click='joinRoom(room, index)'>
-            <i class="hashtag fas fa-hashtag"></i>
-            <p>{{ room.name }}</p>
-        </div>
-
     </div>
 </template>
 

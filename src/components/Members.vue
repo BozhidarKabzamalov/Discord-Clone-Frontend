@@ -1,10 +1,12 @@
 <template lang="html">
-    <div class="members" v-if='servers'>
-        <p class="member" v-for='user in servers[selectedServer].users'>
-            <img class='image' :src="user.image" alt="">
-            <span class='username'>{{ user.username }}</span>
-            <i class="crown fas fa-crown" v-if='servers[selectedServer].userId == user.id'></i>
-        </p>
+    <div class="members">
+        <div v-if='servers.length'>
+            <p class="member" v-for='user in servers[selectedServer].users'>
+                <img class='image' :src="user.image" alt="">
+                <span class='username'>{{ user.username }}</span>
+                <i class="crown fas fa-crown" v-if='servers[selectedServer].userId == user.id'></i>
+            </p>
+        </div>
     </div>
 </template>
 

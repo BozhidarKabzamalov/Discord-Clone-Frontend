@@ -1,40 +1,36 @@
 <template lang="html">
-    <div class='chat-container' v-if='servers'>
-        <div class="chat">
+    <div class="chat">
+        <div class='chat-container' v-if='servers.length'>
             <p class='selected-room-name'>{{ servers[selectedServer].rooms[selectedServerRoom].name }}</p>
             <div class="messages">
-                <div class='message-container' v-for='message in servers[selectedServer].rooms[selectedServerRoom].messages'>
-                    <div class="username-date-container">
-                        <p class='username'>{{ message.username }}</p>
-                        <p class='date'>{{ getTimeAndDate(message.time) }}</p>
+                <div>
+                    <div class='message-container' v-for='message in servers[selectedServer].rooms[selectedServerRoom].messages'>
+                        <div class="username-date-container">
+                            <p class='username'>{{ message.username }}</p>
+                            <p class='date'>{{ getTimeAndDate(message.time) }}</p>
+                        </div>
+                        <p class='message' v-html="message.message"></p>
                     </div>
-                    <p class='message' v-html="message.message"></p>
                 </div>
             </div>
-
             <div class="form-container">
-
                 <form class='send-message' @submit='sendMessage($event)'>
                     <input class='message-input' v-model="message" placeholder="Type a message">
                 </form>
-
-                <div class="emojis-picker-container" v-if='toggleEmojiWindow && emoji'>
-                    <div class="emoji" v-if='emoji' v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
-                        <img class='responsive-image' :src="emoji.image" :alt="emoji.keyword" @click='toggleEmojiWindow = !toggleEmojiWindow'>
+                <div v-if='emoji.length'>
+                    <div class="emojis-picker-container" v-if='toggleEmojiWindow && emoji'>
+                        <div class="emoji" v-if='emoji' v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
+                            <img class='responsive-image' :src="emoji.image" :alt="emoji.keyword" @click='toggleEmojiWindow = !toggleEmojiWindow'>
+                        </div>
+                    </div>
+                    <div class="emojis-button-container" v-if='emoji'>
+                        <div class="emojis-button" @click='toggleEmojiWindow = !toggleEmojiWindow'>
+                            <img class='responsive-image' :src="this.emoji[0].image" :alt="this.emoji[0].keyword">
+                        </div>
                     </div>
                 </div>
-
-                <div class="emojis-button-container" v-if='emoji'>
-                    <div class="emojis-button" @click='toggleEmojiWindow = !toggleEmojiWindow'>
-                        <img class='responsive-image' :src="this.emoji[0].image" :alt="this.emoji[0].keyword">
-                    </div>
-                </div>
-
             </div>
-
-
         </div>
-
     </div>
 </template>
 
@@ -117,14 +113,16 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.chat-container {
-    flex: 1;
-}
 .chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #36393f;
+}
+.chat-container {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #36393f;
 }
 .selected-room-name {
     padding: 20px;
