@@ -1,6 +1,6 @@
 <template lang="html">
     <div class='create-room'>
-        <i class="toggle-create-room fas fa-plus" v-if='servers && userId == servers[selectedServer].userId' @click='createRoomWindow = true'></i>
+        <i class="toggle-create-room fas fa-plus" v-if='userId == selectedServer.userId' @click='createRoomWindow = true'></i>
         <div class="create-room-window" v-if='createRoomWindow'>
             <div class="create-room-container">
                 <form class="create-room-form" @submit='createRoom($event)'>
@@ -26,30 +26,27 @@ export default {
         }
     },
     methods: {
-        createRoom(event){
+        async createRoom(event){
             event.preventDefault()
 
             let room = {
                 name: this.roomName,
-                serverId: this.servers[this.selectedServer].id
+                serverId: this.selectedServer.id
             }
 
-            axios.post('/createRoom', room)
-            .then((response) => {
+            try {
+                let response = await axios.post('/createRoom', room)
                 this.createRoomWindow = false
-                this.servers[this.selectedServer].rooms.push(response.data.room)
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+                this.selectedServer.rooms.push(response.data.room)
+            } catch (error) {
+                console.log(error)
+            }
+
         }
     },
     computed: {
-        servers(){
-            return this.$store.state.servers
-        },
         selectedServer(){
-            return this.$store.state.selectedServer
+            return this.$store.state.servers[this.$store.state.selectedServer]
         },
         userId(){
             return this.$store.state.userId

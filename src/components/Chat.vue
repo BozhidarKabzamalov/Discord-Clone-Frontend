@@ -1,10 +1,10 @@
 <template lang="html">
     <div class="chat">
-        <div class='chat-container' v-if='servers.length'>
-            <p class='selected-room-name'>{{ servers[selectedServer].rooms[selectedServerRoom].name }}</p>
+        <div class='chat-container' v-if='selectedServer'>
+            <p class='selected-room-name'>{{ selectedServer.rooms[selectedServerRoom].name }}</p>
             <div class="messages">
                 <div>
-                    <div class='message-container' v-for='message in servers[selectedServer].rooms[selectedServerRoom].messages'>
+                    <div class='message-container' v-for='message in selectedServer.rooms[selectedServerRoom].messages'>
                         <div class="username-date-container">
                             <p class='username'>{{ message.username }}</p>
                             <p class='date'>{{ getTimeAndDate(message.time) }}</p>
@@ -18,12 +18,12 @@
                     <input class='message-input' v-model="message" placeholder="Type a message">
                 </form>
                 <div v-if='emoji.length'>
-                    <div class="emojis-picker-container" v-if='toggleEmojiWindow && emoji'>
-                        <div class="emoji" v-if='emoji' v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
+                    <div class="emojis-picker-container" v-if='toggleEmojiWindow'>
+                        <div class="emoji" v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
                             <img class='responsive-image' :src="emoji.image" :alt="emoji.keyword" @click='toggleEmojiWindow = !toggleEmojiWindow'>
                         </div>
                     </div>
-                    <div class="emojis-button-container" v-if='emoji'>
+                    <div class="emojis-button-container">
                         <div class="emojis-button" @click='toggleEmojiWindow = !toggleEmojiWindow'>
                             <img class='responsive-image' :src="this.emoji[0].image" :alt="this.emoji[0].keyword">
                         </div>
@@ -46,24 +46,26 @@ export default {
         }
     },
     methods: {
-        sendMessage(event){
+        async sendMessage(event){
             event.preventDefault()
 
             let fullMessage = {
-                roomId: this.servers[this.selectedServer].rooms[this.selectedServerRoom].id,
+                roomId: this.selectedServer.rooms[this.selectedServerRoom].id,
                 username: this.username,
                 userId: this.userId,
                 message: this.insertEmoji(this.message),
                 time: Date.now()
             }
 
-            axios.post('/createMessage', fullMessage)
-            .then(response => {
+            try {
+                let response = await axios.post('/createMessage', fullMessage)
                 console.log(response)
-            }).catch((error) => console.log(error));
+                this.socket.emit('messageToServer', fullMessage)
+                this.message = ''
+            } catch (error) {
+                console.log(error)
+            }
 
-            this.socket.emit('messageToServer', fullMessage)
-            this.message = ''
         },
         getTimeAndDate(timestamp){
             return moment(timestamp).subtract(10, 'days').calendar();
@@ -86,11 +88,8 @@ export default {
         socket(){
             return this.$store.state.socket
         },
-        servers(){
-            return this.$store.state.servers
-        },
         selectedServer(){
-            return this.$store.state.selectedServer
+            return this.$store.state.servers[this.$store.state.selectedServer]
         },
         selectedServerRoom(){
             return this.$store.state.selectedServerRoom
@@ -102,10 +101,10 @@ export default {
     watch: {
         socket: function(){
             this.socket.on('messageToClient', (message) => {
-                this.servers[this.selectedServer].rooms[this.selectedServerRoom].messages.push(message)
+                this.selectedServer.rooms[this.selectedServerRoom].messages.push(message)
             })
             this.socket.on('chatHistory', (chatHistory) => {
-                this.servers[this.selectedServer].rooms[this.selectedServerRoom].messages = chatHistory
+                this.selectedServer.rooms[this.selectedServerRoom].messages = chatHistory
             })
         }
     }

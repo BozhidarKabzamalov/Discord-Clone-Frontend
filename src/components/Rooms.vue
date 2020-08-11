@@ -1,15 +1,15 @@
 <template lang="html">
     <div class="rooms">
-        <div v-if='servers.length'>
+        <div v-if='selectedServer'>
             <div class="selected-server">
-                <p class='selected-server-name'>{{ servers[selectedServer].name }}</p>
+                <p class='selected-server-name'>{{ selectedServer.name }}</p>
                 <ServerSettings></ServerSettings>
             </div>
             <div class="text-channels-container">
                 <h2 class='text-channels'>Rooms</h2>
                 <CreateRoom></CreateRoom>
             </div>
-            <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in servers[selectedServer].rooms' @click='joinRoom(room, index)'>
+            <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in selectedServer.rooms' @click='joinRoom(room, index)'>
                 <i class="hashtag fas fa-hashtag"></i>
                 <p>{{ room.name }}</p>
             </div>
@@ -32,31 +32,23 @@ export default {
             this.$store.dispatch('joinRoom', {
                 room: room,
                 index: index,
-                serverId: this.servers[this.selectedServer].id
+                serverId: selectedServer.id
             })
         },
-        deleteRoom(room, index){
-            axios.post('/deleteRoom', room)
-            .then((response) => {
-                console.log(response)
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        async deleteRoom(room, index){
+            try {
+                let response = await axios.post('/deleteRoom', room)
+            } catch (error) {
+                console.log(error)
+            }
         }
     },
     computed: {
-        servers(){
-            return this.$store.state.servers
-        },
         selectedServer(){
-            return this.$store.state.selectedServer
+            return this.$store.state.servers[this.$store.state.selectedServer]
         },
         selectedServerRoom(){
             return this.$store.state.selectedServerRoom
-        },
-        userId(){
-            return this.$store.state.userId
         }
     }
 }

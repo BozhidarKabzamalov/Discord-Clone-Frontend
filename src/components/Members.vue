@@ -1,10 +1,10 @@
 <template lang="html">
     <div class="members">
-        <div v-if='servers.length'>
-            <p class="member" v-for='user in servers[selectedServer].users'>
+        <div v-if='selectedServer'>
+            <p class="member" v-for='user in selectedServer.users'>
                 <img class='image' :src="user.image" alt="">
                 <span class='username'>{{ user.username }}</span>
-                <i class="crown fas fa-crown" v-if='servers[selectedServer].userId == user.id'></i>
+                <i class="crown fas fa-crown" v-if='selectedServer.userId == user.id'></i>
             </p>
         </div>
     </div>
@@ -13,11 +13,8 @@
 <script>
 export default {
     computed: {
-        servers(){
-            return this.$store.state.servers
-        },
         selectedServer(){
-            return this.$store.state.selectedServer
+            return this.$store.state.servers[this.$store.state.selectedServer]
         }
     }
 }

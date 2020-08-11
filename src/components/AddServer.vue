@@ -8,8 +8,8 @@
                 <form class="create-server-form" @submit='createServer($event)'>
                     <h1>Create your own server</h1>
                     <p>Make a place for you to hang out with your friends.</p>
-                    <label :for="addServerInput.name">server name</label>
-                    <input v-model="addServerInput.name" placeholder="Enter a server name">
+                    <label :for="serverName">server name</label>
+                    <input v-model="serverName" placeholder="Enter a server name">
                     <input type="file" name="image" @change="handleFileUpload($event)">
                     <button type="submit" name="button">Create</button>
                 </form>
@@ -26,39 +26,46 @@ export default {
     data(){
         return {
             addServerWindow: false,
-            addServerInput: {
-                name: '',
-                image: 'https://media.discordapp.net/attachments/733747075455647898/733748919296851971/2.jpg?width=677&height=677',
-                file: ''
-            }
+            serverName: '',
+            serverImage: ''
         }
     },
     methods: {
         handleFileUpload(event){
-            this.addServerInput.file = event.target.files[0]
+            this.serverImage = event.target.files[0]
         },
-        createServer(event){
+        async createServer(event){
             event.preventDefault()
 
             let server = new FormData()
-            server.append('name', this.addServerInput.name)
-            server.append('image', this.addServerInput.file)
-            server.append('userId', localStorage.userId)
+            server.append('name', this.serverName)
+            server.append('image', this.serverImage)
+            server.append('userId', this.userId)
 
-            axios.post('/createServer', server)
-            .then((response) => {
+            try {
+                let response = await axios.post('/createServer', server)
+
                 this.addServerWindow = false;
                 this.$store.commit('addServer', response.data)
-                let servers = this.$store.state.servers
+
                 let data = {
-                    index: servers.length - 1,
+                    index: this.index,
                     server: response.data
                 }
+
                 this.$store.dispatch('joinServer', data)
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+    },
+    computed: {
+        index(){
+            return this.$store.state.servers.length - 1
+        },
+        userId(){
+            return this.$store.state.userId
         }
     }
 }

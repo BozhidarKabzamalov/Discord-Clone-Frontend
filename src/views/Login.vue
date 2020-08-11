@@ -11,6 +11,7 @@
                     <p>Password</p>
                     <input v-model='password' type="password">
                 </div>
+                <div class='error margin-bottom-20' v-if='error'>Wrong credentials</div>
                 <button type="submit" name="button">Continue</button>
             </form>
         </div>
@@ -19,21 +20,40 @@
 
 <script>
 import axios from 'axios'
+import router from '../router'
 
 export default {
     data(){
         return {
             email: '',
             password: '',
+            error: null
         }
     },
     methods: {
-        onSubmit(){
+        async onSubmit(){
             let userInfo = {
                 password: this.password,
                 email: this.email
             }
-            this.$store.dispatch('login', userInfo)
+
+            try {
+                let response = await axios.post('/login', userInfo)
+
+                if (response.status == 401) {
+                    this.error = true
+                } else {
+                    this.$store.commit('authUser', {
+                        token: response.data.token,
+                        userId: response.data.userId,
+                        username: response.data.username
+                    })
+                    router.replace('/')
+                }
+            } catch (error) {
+                console.log(error)
+            }
+
         }
     }
 }
@@ -104,5 +124,9 @@ button {
 }
 button:hover {
     background-color: #677bc4;
+}
+.error {
+    color: #f04747;
+    text-align: center;
 }
 </style>

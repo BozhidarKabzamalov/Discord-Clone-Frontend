@@ -15,7 +15,7 @@ const store = new Vuex.Store({
         servers: [],
         selectedServer: null,
         selectedServerRoom: null,
-        emoji: null
+        emoji: []
     },
     mutations: {
         servers(state, servers){
@@ -82,9 +82,9 @@ const store = new Vuex.Store({
                 })
             }
         },
-        getUserServers({commit, state, dispatch}, userId){
-            return axios.get("/servers/" + userId)
-            .then((response) => {
+        async getUserServers({commit, state, dispatch}, userId){
+            try {
+                let response = await axios.get("/servers/" + userId)
                 state.servers = response.data.servers
                 if (response.data.servers.length) {
                     dispatch('joinServer', {
@@ -92,45 +92,17 @@ const store = new Vuex.Store({
                         index: 0
                     })
                 }
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+            } catch (error) {
+                console.log(error)
+            }
         },
-        getEmoji({commit}){
-            return axios.get("/emoji")
-            .then((response) => {
+        async getEmoji({commit}){
+            try {
+                let response = await axios.get("/emoji")
                 commit('emoji', response.data)
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-        },
-        register({commit, dispatch}, data){
-            axios.post('/register', {
-                username: data.username,
-                password: data.password,
-                email: data.email
-            })
-            .then(response => {
-                commit('authUser', {
-                    token: response.data.token,
-                    userId: response.data.userId,
-                    username: response.data.username
-                })
-                router.replace('/')
-            });
-        },
-        login({commit, dispatch}, userInfo){
-            axios.post('/login', userInfo)
-            .then(response => {
-                commit('authUser', {
-                    token: response.data.token,
-                    userId: response.data.userId,
-                    username: response.data.username
-                })
-                router.replace('/')
-            }).catch((error) => console.log(error));
+            } catch (error) {
+                console.log(error)
+            }
         },
         autoLogin({commit, dispatch}){
             const token = localStorage.getItem('token')

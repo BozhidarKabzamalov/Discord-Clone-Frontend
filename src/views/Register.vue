@@ -33,13 +33,30 @@ export default {
         }
     },
     methods: {
-        onSubmit(){
+        async onSubmit(){
             let userInfo = {
                 username: this.username,
                 password: this.password,
                 email: this.email
             }
-            this.$store.dispatch('register', userInfo)
+
+            try {
+                let response = await axios.post('/register', userInfo)
+
+                if (response.status == 401) {
+                    console.log('Error')
+                } else {
+                    this.$store.commit('authUser', {
+                        token: response.data.token,
+                        userId: response.data.userId,
+                        username: response.data.username
+                    })
+                    router.replace('/')
+                }
+            } catch (error) {
+                console.log(error)
+            }
+
         }
     }
 }

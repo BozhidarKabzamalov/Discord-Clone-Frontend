@@ -15,9 +15,7 @@
                 </div>
                 <div class="update-server" @click='updateServer()'>Save Changes</div>
                 <i class="exit fas fa-times" @click='serverSettingsWindow = false'></i>
-                <div class="" @click='deleteServer(selectedServer)'>
-                    Delete Server
-                </div>
+                <div class="" @click='deleteServer(selectedServer)'>Delete Server</div>
             </div>
         </div>
     </div>
@@ -35,29 +33,26 @@ export default {
         }
     },
     methods: {
-        updateServer(){
+        async updateServer(){
             let data = {
                 server: this.selectedServer,
                 newName: this.serverName
             }
 
-            axios.post('/updateServer', data)
-            .then(result => {
-                console.log(result)
-            })
-            .catch(error => {
+            try {
+                let response = await axios.post('/updateServer', data)
+            } catch (error) {
                 console.log(error)
-            })
+            }
         },
-        deleteServer(server){
-            axios.post('/deleteServer', server)
-            .then(response => {
+        async deleteServer(server){
+            try {
+                let response = await axios.post('/deleteServer', server)
                 this.$store.commit('deleteServer', server)
-                console.log(response)
-            })
-            .catch(error => {
+                this.serverSettingsWindow = false
+            } catch (error) {
                 console.log(error)
-            })
+            }
         }
     },
     computed: {
