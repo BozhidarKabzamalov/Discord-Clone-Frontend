@@ -59,7 +59,6 @@ export default {
 
             try {
                 let response = await axios.post('/createMessage', fullMessage)
-                console.log(response)
                 this.socket.emit('messageToServer', fullMessage)
                 this.message = ''
             } catch (error) {

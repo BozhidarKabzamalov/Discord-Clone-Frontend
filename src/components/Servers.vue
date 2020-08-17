@@ -15,7 +15,6 @@
 
 <script>
 import AddServer from './AddServer'
-import axios from 'axios'
 
 export default {
     components: {
@@ -95,5 +94,4 @@ export default {
     height: 100%;
     border-radius: 50%;
 }
-
 </style>

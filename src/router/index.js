@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Register from '../views/Register.vue'
 import Login from '../views/Login.vue'
-import store from '../store'
 
 Vue.use(VueRouter)
 
@@ -23,12 +22,26 @@ const routes = [
     {
         path: '/register',
         name: 'register',
-        component: Register
+        component: Register,
+        beforeEnter(to, from, next){
+            if (localStorage.getItem('token') === null) {
+                next()
+            } else {
+                next('/')
+            }
+        }
     },
     {
         path: '/login',
         name: 'login',
-        component: Login
+        component: Login,
+        beforeEnter(to, from, next){
+            if (localStorage.getItem('token') === null) {
+                next()
+            } else {
+                next('/')
+            }
+        }
     }
 ]
 

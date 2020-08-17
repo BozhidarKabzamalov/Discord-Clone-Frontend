@@ -32,7 +32,7 @@ export default {
             this.$store.dispatch('joinRoom', {
                 room: room,
                 index: index,
-                serverId: selectedServer.id
+                serverId: this.selectedServer.id
             })
         },
         async deleteRoom(room, index){

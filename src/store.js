@@ -18,24 +18,24 @@ const store = new Vuex.Store({
         emoji: []
     },
     mutations: {
-        servers(state, servers){
-            state.servers = servers
-        },
         socket(state, socket){
             state.socket = socket
+        },
+        setServers(state, servers){
+            state.servers = servers
+        },
+        addServer(state, server){
+            state.servers.push(server)
+        },
+        removeServer(state, server){
+            let index = state.servers.indexOf(server)
+            state.servers.splice(index, 1)
         },
         selectedServer(state, selectedServer){
             state.selectedServer = selectedServer
         },
         selectedServerRoom(state, selectedServerRoom){
             state.selectedServerRoom = selectedServerRoom
-        },
-        addServer(state, server){
-            state.servers.push(server)
-        },
-        deleteServer(state, server){
-            let index = state.servers.indexOf(server)
-            state.servers.splice(index, 1)
         },
         emoji(state, emoji){
             state.emoji = emoji
@@ -85,7 +85,7 @@ const store = new Vuex.Store({
         async getUserServers({commit, state, dispatch}, userId){
             try {
                 let response = await axios.get("/servers/" + userId)
-                state.servers = response.data.servers
+                commit('setServers', response.data.servers)
                 if (response.data.servers.length) {
                     dispatch('joinServer', {
                         server: state.servers[0],

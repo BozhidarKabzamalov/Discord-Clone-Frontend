@@ -48,7 +48,7 @@ export default {
         async deleteServer(server){
             try {
                 let response = await axios.post('/deleteServer', server)
-                this.$store.commit('deleteServer', server)
+                this.$store.commit('removeServer', server)
                 this.serverSettingsWindow = false
             } catch (error) {
                 console.log(error)
