@@ -12,6 +12,7 @@
                     <input v-model="serverName" placeholder="Enter a server name">
                     <input type="file" name="image" @change="handleFileUpload($event)">
                     <button type="submit" name="button">Create</button>
+                    <cropper :src="originalImage" @change="onChange" 	:stencil-props="{ aspectRatio: 1 }" />
                 </form>
                 <div class="black-screen" @click='addServerWindow = false'></div>
             </div>
@@ -21,25 +22,42 @@
 
 <script>
 import axios from 'axios'
+import { Cropper } from 'vue-advanced-cropper'
 
 export default {
+    components: {
+        Cropper
+    },
     data(){
         return {
             addServerWindow: false,
             serverName: '',
-            serverImage: ''
+            originalImage: '',
+            alteredImage: null,
+            coordinates: {
+				width: 0,
+				height: 0,
+				left: 0,
+				top: 0,
+			},
         }
     },
     methods: {
+        onChange({ coordinates, canvas, }) {
+			this.coordinates = coordinates;
+			canvas.toBlob(blob => {
+                this.alteredImage = blob
+            });
+		},
         handleFileUpload(event){
-            this.serverImage = event.target.files[0]
+            this.originalImage = URL.createObjectURL(event.target.files[0])
         },
         async createServer(event){
             event.preventDefault()
 
             let server = new FormData()
             server.append('name', this.serverName)
-            server.append('image', this.serverImage)
+            server.append('image', this.alteredImage)
             server.append('userId', this.userId)
 
             try {

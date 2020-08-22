@@ -1,32 +1,35 @@
 <template lang="html">
-    <div class="servers" v-if='servers'>
-        <div v-for='(server, index) in servers' class="server-container">
+    <div class="navigation">
+        <router-link class="server-container" :to="{ name: 'friendsList' }">
             <div class="server-active">
-                <div v-if='selectedServer === index' class="server-active-bar"></div>
+                <div v-if='selectedServer === null' class="server-active-bar"></div>
                 <div v-else class="server-inactive-bar"></div>
             </div>
-            <div class="server" @click='joinServer(server, index)'>
+            <div class="server">
+                <div class="home-image">
+                    <p><i class="fas fa-users"></i></p>
+                </div>
+            </div>
+        </router-link>
+        <router-link class="server-container" v-for='(server, index) in servers' :to="{ name: 'server', params: { endpoint: server.endpoint.substr(1) }}">
+            <div class="server-active">
+                <div v-if='selectedServer == index' class="server-active-bar"></div>
+                <div v-else class="server-inactive-bar"></div>
+            </div>
+            <div class="server">
                 <img class='server-image' :src="server.path + 'original-' + server.thumbnail" alt="">
             </div>
-        </div>
-        <AddServer></AddServer>
+        </router-link>
+        <ServerCreate></ServerCreate>
     </div>
 </template>
 
 <script>
-import AddServer from './AddServer'
+import ServerCreate from './ServerCreate'
 
 export default {
     components: {
-        AddServer
-    },
-    methods: {
-        joinServer(server, index){
-            this.$store.dispatch('joinServer', {
-                server: server,
-                index: index
-            })
-        }
+        ServerCreate
     },
     computed: {
         servers(){
@@ -40,7 +43,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.servers {
+.navigation {
     width: 72px;
     background-color: #202225;
     display: flex;
@@ -93,5 +96,16 @@ export default {
     width: 100%;
     height: 100%;
     border-radius: 50%;
+}
+.home-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-size: 18px;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: #7289da;
 }
 </style>

@@ -8,17 +8,17 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
-        token: null,
         username: null,
         userId: null,
+        token: null,
         socket: null,
         servers: [],
+        friends: [],
         selectedServer: null,
-        selectedServerRoom: null,
-        emoji: []
+        selectedServerRoom: 0
     },
     mutations: {
-        socket(state, socket){
+        setSocket(state, socket){
             state.socket = socket
         },
         setServers(state, servers){
@@ -31,16 +31,17 @@ const store = new Vuex.Store({
             let index = state.servers.indexOf(server)
             state.servers.splice(index, 1)
         },
-        selectedServer(state, selectedServer){
-            state.selectedServer = selectedServer
+        setSelectedServer(state, selectedServer){
+            let index = state.servers.indexOf(selectedServer)
+            state.selectedServer = index
         },
-        selectedServerRoom(state, selectedServerRoom){
+        setSelectedServerRoom(state, selectedServerRoom){
             state.selectedServerRoom = selectedServerRoom
         },
-        emoji(state, emoji){
-            state.emoji = emoji
+        setFriends(state, friends){
+            state.friends = friends
         },
-        authUser(state, userData){
+        setUser(state, userData){
             state.token = userData.token
             state.userId = userData.userId
             state.username = userData.username
@@ -48,7 +49,7 @@ const store = new Vuex.Store({
             localStorage.setItem('userId', userData.userId);
             localStorage.setItem('username', userData.username);
         },
-        clearAuthUser(state){
+        removeUser(state){
             state.token = null;
             state.userId = null;
             state.username = null;
@@ -59,47 +60,36 @@ const store = new Vuex.Store({
     },
     actions: {
         joinServer({commit, dispatch, state}, server){
-            if (state.selectedServer != server.index) {
-                if (state.socket) {
-                    state.socket.close()
-                }
-                commit('selectedServer', server.index)
-                commit('selectedServerRoom', null)
-                commit('socket', io('http://localhost:3000' + server.server.endpoint))
+            if (state.socket) {
+                state.socket.close()
+            }
+            if (server) {
+                commit('setSocket', io('http://localhost:3000' + server.endpoint))
                 dispatch('joinRoom', {
-                    serverId: server.server.id,
-                    room: server.server.rooms[0],
+                    serverId: server.id,
+                    room: server.rooms[0],
                     index: 0
+                })
+                state.socket.on('messageToClient', (message) => {
+                    server.rooms[state.selectedServerRoom].messages.push(message)
+                })
+                state.socket.on('chatHistory', (chatHistory) => {
+                    server.rooms[state.selectedServerRoom].messages = chatHistory
                 })
             }
         },
         joinRoom({commit, state}, room){
-            if (state.selectedServerRoom != room.index) {
-                commit('selectedServerRoom', room.index)
-                state.socket.emit('joinRoom', {
-                    roomName: room.room.name,
-                    serverId: room.serverId
-                })
-            }
+            commit('setSelectedServerRoom', room.index)
+            state.socket.emit('joinRoom', {
+                roomName: room.room.name,
+                serverId: room.serverId
+            })
         },
         async getUserServers({commit, state, dispatch}, userId){
             try {
                 let response = await axios.get("/servers/" + userId)
                 commit('setServers', response.data.servers)
-                if (response.data.servers.length) {
-                    dispatch('joinServer', {
-                        server: state.servers[0],
-                        index: 0
-                    })
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        },
-        async getEmoji({commit}){
-            try {
-                let response = await axios.get("/emoji")
-                commit('emoji', response.data)
+                commit('setFriends', response.data.friends)
             } catch (error) {
                 console.log(error)
             }
@@ -111,14 +101,20 @@ const store = new Vuex.Store({
             if (!token) {
                 return
             }
-            commit('authUser', {
+            commit('setUser', {
                 token: token,
                 userId: userId,
                 username: username
             })
+            axios.interceptors.request.use(function (config) {
+                config.headers.Authorization = 'Bearer ' + token
+
+                return config
+            });
+            dispatch('getUserServers', userId)
         },
         logout({commit}){
-            commit('clearAuthUser')
+            commit('removeUser')
             router.replace('/login')
         }
     }

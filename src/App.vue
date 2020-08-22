@@ -8,7 +8,6 @@
 export default {
     mounted(){
         this.$store.dispatch('autoLogin');
-        this.$store.dispatch('getEmoji')
     }
 }
 </script>

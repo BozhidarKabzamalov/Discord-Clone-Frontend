@@ -1,23 +1,21 @@
 <template lang="html">
     <div class="chat">
-        <div class='chat-container' v-if='selectedServer'>
-            <p class='selected-room-name'>{{ selectedServer.rooms[selectedServerRoom].name }}</p>
+        <div class='chat-container' v-if='server'>
+            <p class='selected-room-name'>{{ server.rooms[selectedServerRoom].name }}</p>
             <div class="messages">
-                <div>
-                    <div class='message-container' v-for='message in selectedServer.rooms[selectedServerRoom].messages'>
-                        <div class="username-date-container">
-                            <p class='username'>{{ message.username }}</p>
-                            <p class='date'>{{ getTimeAndDate(message.time) }}</p>
-                        </div>
-                        <p class='message' v-html="message.message"></p>
+                <div class='message-container' v-for='message in server.rooms[selectedServerRoom].messages'>
+                    <div class="username-date-container">
+                        <p class='username'>{{ message.username }}</p>
+                        <p class='date'>{{ getTimeAndDate(message.time) }}</p>
                     </div>
+                    <p class='message' v-html="message.message"></p>
                 </div>
             </div>
             <div class="form-container">
                 <form class='send-message' @submit='sendMessage($event)'>
                     <input class='message-input' v-model="message" placeholder="Type a message">
                 </form>
-                <div v-if='emoji.length'>
+                <!--<div v-if='emoji.length'>
                     <div class="emojis-picker-container" v-if='toggleEmojiWindow'>
                         <div class="emoji" v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
                             <img class='responsive-image' :src="emoji.image" :alt="emoji.keyword" @click='toggleEmojiWindow = !toggleEmojiWindow'>
@@ -28,7 +26,7 @@
                             <img class='responsive-image' :src="this.emoji[0].image" :alt="this.emoji[0].keyword">
                         </div>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>
@@ -39,6 +37,9 @@ import moment from 'moment'
 import axios from 'axios'
 
 export default {
+    props: [
+        'server'
+    ],
     data(){
         return {
             message: '',
@@ -50,10 +51,11 @@ export default {
             event.preventDefault()
 
             let fullMessage = {
-                roomId: this.selectedServer.rooms[this.selectedServerRoom].id,
+                roomId: this.server.rooms[this.selectedServerRoom].id,
                 username: this.username,
                 userId: this.userId,
-                message: this.insertEmoji(this.message),
+                //message: this.insertEmoji(this.message),
+                message: this.message,
                 time: Date.now()
             }
 
@@ -71,7 +73,9 @@ export default {
         },
         insertEmoji(message){
             this.emoji.forEach(emoji => {
-                message = message.replace(new RegExp("(?:^|\\s)"+ emoji.keyword + "\\b", "g"), `<span class="emoji ${emoji.keyword}"><img class='responsive-image' src="${emoji.image}" alt="${emoji.keyword}"></span>`)
+                let regularExpression = new RegExp("(?:^|\\s)"+ emoji.keyword + "\\b", "g")
+                let html = `<span class="emoji ${emoji.keyword}"><img class='responsive-image' src="${emoji.image}" alt="${emoji.keyword}"></span>`
+                message = message.replace(regularExpression, html)
             })
 
             return message
@@ -87,24 +91,8 @@ export default {
         socket(){
             return this.$store.state.socket
         },
-        selectedServer(){
-            return this.$store.state.servers[this.$store.state.selectedServer]
-        },
         selectedServerRoom(){
             return this.$store.state.selectedServerRoom
-        },
-        emoji(){
-            return this.$store.state.emoji
-        }
-    },
-    watch: {
-        socket: function(){
-            this.socket.on('messageToClient', (message) => {
-                this.selectedServer.rooms[this.selectedServerRoom].messages.push(message)
-            })
-            this.socket.on('chatHistory', (chatHistory) => {
-                this.selectedServer.rooms[this.selectedServerRoom].messages = chatHistory
-            })
         }
     }
 }

@@ -1,22 +1,19 @@
 <template lang="html">
     <div class="members">
-        <div v-if='selectedServer'>
-            <p class="member" v-for='user in selectedServer.users'>
-                <img class='image' :src="user.image" alt="">
-                <span class='username'>{{ user.username }}</span>
-                <i class="crown fas fa-crown" v-if='selectedServer.userId == user.id'></i>
-            </p>
-        </div>
+        <p class="member" v-for='member in members'>
+            <img class='image' :src="member.image" alt="">
+            <span class='username'>{{ member.username }}</span>
+            <i class="crown fas fa-crown" v-if='server.userId == member.id'></i>
+        </p>
     </div>
 </template>
 
 <script>
 export default {
-    computed: {
-        selectedServer(){
-            return this.$store.state.servers[this.$store.state.selectedServer]
-        }
-    }
+    props: [
+        'server',
+        'members'
+    ]
 }
 </script>
 
@@ -30,6 +27,12 @@ export default {
     align-items: center;
     padding: 30px 20px 0 20px;
 }
+.image {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+    border-radius: 50%;
+}
 .username {
     font-weight: 500;
     color: #8e9297;
@@ -37,11 +40,5 @@ export default {
 }
 .crown {
     color: #faa61a;
-}
-.image {
-    width: 32px;
-    height: 32px;
-    margin-right: 10px;
-    border-radius: 50%;
 }
 </style>

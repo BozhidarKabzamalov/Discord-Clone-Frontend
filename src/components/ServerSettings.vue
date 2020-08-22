@@ -6,7 +6,7 @@
                 <h1>Server Overview</h1>
                 <div class="server">
                     <div class="thumbnail-container">
-                        <img :src="selectedServer.thumbnail" alt="">
+                        <img :src="server.thumbnail" alt="">
                     </div>
                     <div class="name-container">
                         <p>Server name</p>
@@ -26,16 +26,19 @@
 import axios from 'axios'
 
 export default {
+    props: [
+        'server'
+    ],
     data(){
         return {
             serverSettingsWindow: false,
-            serverName: this.$store.state.servers[this.$store.state.selectedServer].name
+            serverName: this.server.name
         }
     },
     methods: {
         async updateServer(){
             let data = {
-                server: this.selectedServer,
+                server: this.server,
                 newName: this.serverName
             }
 
@@ -55,9 +58,9 @@ export default {
             }
         }
     },
-    computed: {
-        selectedServer(){
-            return this.$store.state.servers[this.$store.state.selectedServer]
+    watch: {
+        server(){
+            this.serverName = this.server.name
         }
     }
 }

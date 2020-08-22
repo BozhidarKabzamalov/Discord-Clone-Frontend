@@ -3,14 +3,27 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Register from '../views/Register.vue'
 import Login from '../views/Login.vue'
+import Server from '../components/Server.vue'
+import FriendsList from '../components/FriendsList.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
     {
         path: '/',
-        name: 'home',
         component: Home,
+        children: [
+            {
+                path: '/',
+                name: 'friendsList',
+                component: FriendsList
+            },
+            {
+                path: '/server/:endpoint',
+                name: 'server',
+                component: Server,
+            }
+        ],
         beforeEnter(to, from, next){
             if (localStorage.getItem('token') != null) {
                 next()

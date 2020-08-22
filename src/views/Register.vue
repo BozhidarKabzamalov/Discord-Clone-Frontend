@@ -47,7 +47,7 @@ export default {
                 if (response.status == 401) {
                     console.log('Error')
                 } else {
-                    this.$store.commit('authUser', {
+                    this.$store.commit('setUser', {
                         token: response.data.token,
                         userId: response.data.userId,
                         username: response.data.username

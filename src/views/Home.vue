@@ -1,35 +1,24 @@
 <template>
     <div class="home">
-        <Servers></Servers>
-        <Rooms></Rooms>
-        <Chat></Chat>
-        <Members></Members>
+        <Navigation></Navigation>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
-import Servers from '../components/Servers'
-import Rooms from '../components/Rooms'
-import Chat from '../components/Chat'
-import Members from '../components/Members'
+import Navigation from '../components/Navigation'
 
 export default {
     components: {
-        Servers,
-        Rooms,
-        Chat,
-        Members
-    },
-    created(){
-        this.$store.dispatch('getUserServers', localStorage.userId)
+        Navigation
     }
 }
 </script>
 
 <style scoped>
 .home {
+    display: flex;
     min-width: 100vw;
     min-height: 100vh;
-    display: flex;
 }
 </style>
