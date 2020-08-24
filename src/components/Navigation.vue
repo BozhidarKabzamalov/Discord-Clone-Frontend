@@ -17,7 +17,7 @@
                 <div v-else class="server-inactive-bar"></div>
             </div>
             <div class="server">
-                <img class='server-image' :src="server.path + 'original-' + server.thumbnail" alt="">
+                <img class='server-image' :src="'http://localhost:3000/images/servers/' + server.thumbnail + '/' + 'original-' + server.thumbnail" alt="">
             </div>
         </router-link>
         <ServerCreate></ServerCreate>
