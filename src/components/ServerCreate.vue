@@ -1,37 +1,31 @@
 <template lang="html">
     <div class='server-create'>
-        <i class="toggle-create-server fas fa-plus" @click='createServerWindow = true'></i>
-        <div class='create-server-window' v-if='createServerWindow'>
-            <div class="create-server-form-container">
-                <form class="create-server-form" @submit='createServer($event)'>
-                    <h1>Create your own server</h1>
-                    <p>Make a place for you to hang out with your friends.</p>
-                    <div class="inputs-container">
-                        <div class="input-container">
-                            <label class='text-input-label' :for="serverName">server name</label>
-                            <input type="text" v-model="serverName" placeholder="Enter a server name">
-                        </div>
-                        <div class="input-container">
-                            <label class="file-input-label" for="file-upload">
-                                <img class='altered-image' v-if='croppedImage' :src="croppedImageUrl">
-                                <i class="fas fa-cloud-upload-alt" v-else></i>
-                            </label>
-                            <input id='file-upload' type="file" name="image" @change="handleFileUpload($event)">
-                        </div>
-                    </div>
-                    <div class="button-container">
-                        <button type="submit" name="button">Create</button>
-                    </div>
-                </form>
-                <div class="image-editor" v-if='imageEditorWindow'>
-                    <div class="cropper-container">
-                        <cropper :src="originalImage" @change="onChange" :stencil-props="{ aspectRatio: 1 }" />
-                    </div>
-                    <div class="image-editor-footer">
-                        <div class='apply-edits' @click='imageEditorWindow = false'>Apply</div>
-                    </div>
+        <form class="create-server-form" @submit='createServer($event)'>
+            <h1>Create your own server</h1>
+            <p>Make a place for you to hang out with your friends.</p>
+            <div class="inputs-container">
+                <div class="input-container">
+                    <label class='text-input-label' :for="serverName">server name</label>
+                    <input type="text" v-model="serverName" placeholder="Enter a server name">
                 </div>
-                <div class="black-screen" @click='resetModal()'></div>
+                <div class="input-container">
+                    <label class="file-input-label" for="file-upload">
+                        <img class='altered-image' v-if='croppedImage' :src="croppedImageUrl">
+                        <i class="fas fa-cloud-upload-alt" v-else></i>
+                    </label>
+                    <input id='file-upload' type="file" name="image" @change="handleFileUpload($event)">
+                </div>
+            </div>
+            <div class="button-container">
+                <button type="submit" name="button">Create</button>
+            </div>
+        </form>
+        <div class="image-editor" v-if='imageEditorWindow'>
+            <div class="cropper-container">
+                <cropper :src="originalImage" @change="onChange" :stencil-props="{ aspectRatio: 1 }" />
+            </div>
+            <div class="image-editor-footer">
+                <div class='apply-edits' @click='imageEditorWindow = false'>Apply</div>
             </div>
         </div>
     </div>
@@ -47,7 +41,6 @@ export default {
     },
     data(){
         return {
-            createServerWindow: false,
             serverName: '',
             originalImage: '',
             croppedImage: null,
@@ -61,19 +54,6 @@ export default {
         }
     },
     methods: {
-        resetModal(){
-            this.createServerWindow = false
-            this.serverName = '',
-            this.originalImage = '',
-            this.croppedImage = null,
-            this.coordinates = {
-                width: 0,
-                height: 0,
-                left: 0,
-                top: 0,
-            },
-            this.imageEditorWindow = false
-        },
         onChange({ coordinates, canvas, }){
 			this.coordinates = coordinates;
             canvas.toBlob(blob => {
@@ -97,6 +77,7 @@ export default {
                 this.createServerWindow = false;
                 this.$store.commit('addServer', response.data)
                 this.$store.dispatch('joinServer', response.data)
+                this.$emit('closeModal')
             } catch (error) {
                 console.log(error)
             }
@@ -106,51 +87,17 @@ export default {
     computed: {
         croppedImageUrl(){
             return URL.createObjectURL(this.croppedImage)
-        },
-        index(){
-            return this.$store.state.servers.length - 1
-        },
-        username(){
-            return this.$store.state.username
         }
     }
 }
 </script>
 
 <style lang="css" scoped>
-.toggle-create-server {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 48px;
-    height: 48px;
-    background-color: #36393f;
-    color: #43b581;
-    margin-top: 12px;
-    border-radius: 50%;
-    transition: all .2s ease-in-out;
-    cursor: pointer;
-}
-.toggle-create-server:hover {
-    border-radius: 20px;
-    background-color: #43b581;
-    color: #f1f1f1;
-}
-.create-server-window {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-.create-server-form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+.server-create {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .create-server-form {
     display: flex;
@@ -198,15 +145,6 @@ export default {
     border: none;
     border-bottom: 2px solid #e3e5e8;
     outline: none;
-}
-.black-screen {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 2;
 }
 .input-container {
     display: flex;

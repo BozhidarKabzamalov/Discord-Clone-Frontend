@@ -150,7 +150,6 @@ export default {
     font-size: 14px;
 }
 .form-container {
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -167,7 +166,6 @@ export default {
     border-radius: 0px 5px 5px 0px;
 }
 .send-message {
-    position: relative;
     padding: 20px 0px 20px 20px;
     flex: 1;
 }

@@ -1,5 +1,6 @@
 <template lang="html">
     <div class="navigation">
+
         <router-link class="server-container" :to="{ name: 'friendsList' }">
             <div class="server-active">
                 <div v-if='selectedServer === null' class="server-active-bar"></div>
@@ -11,25 +12,54 @@
                 </div>
             </div>
         </router-link>
+
         <router-link class="server-container" v-for='(server, index) in servers' :to="{ name: 'server', params: { endpoint: server.endpoint.substr(1) }}">
             <div class="server-active">
                 <div v-if='selectedServer == index' class="server-active-bar"></div>
                 <div v-else class="server-inactive-bar"></div>
             </div>
             <div class="server">
-                <img class='server-image' :src="'http://localhost:3000/images/servers/' + server.thumbnail + '/' + 'original-' + server.thumbnail" alt="">
+                <img class='server-image' :src="server.thumbnail" :alt="server.name">
             </div>
         </router-link>
-        <ServerCreate></ServerCreate>
+
+        <i class="toggle-join-create-server fas fa-plus" @click="openModal()"></i>
+
+        <Modal v-show="isModalOpen" @closeModal="closeModal()">
+            <template>
+                <ServerCreateOrJoin :selectedAction='selectedAction' @setSelectedAction='setSelectedAction' @closeModal='closeModal'></ServerCreateOrJoin>
+            </template>
+        </Modal>
+
     </div>
 </template>
 
 <script>
-import ServerCreate from './ServerCreate'
+import ServerCreateOrJoin from './ServerCreateOrJoin'
+import Modal from './Modal.vue';
 
 export default {
     components: {
-        ServerCreate
+        ServerCreateOrJoin,
+        Modal
+    },
+    data(){
+        return {
+            isModalOpen: false,
+            selectedAction: null
+        }
+    },
+    methods: {
+        setSelectedAction(action){
+            this.selectedAction = action
+        },
+        openModal() {
+            this.isModalOpen = true
+        },
+        closeModal() {
+            this.isModalOpen = false
+            this.selectedAction = null
+        }
     },
     computed: {
         servers(){
@@ -107,5 +137,23 @@ export default {
     height: 100%;
     border-radius: 15px;
     background-color: #7289da;
+}
+.toggle-join-create-server {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    background-color: #36393f;
+    color: #43b581;
+    margin-top: 12px;
+    border-radius: 50%;
+    transition: all .2s ease-in-out;
+    cursor: pointer;
+}
+.toggle-join-create-server:hover {
+    border-radius: 20px;
+    background-color: #43b581;
+    color: #f1f1f1;
 }
 </style>

@@ -13,7 +13,7 @@
                         <div class="input-container">
                             <label class="file-input-label" for="file-upload">
                                 <img class='altered-image' v-if='croppedImage' :src="croppedImageUrl">
-                                <img class='altered-image' :src="'http://localhost:3000/images/servers/' + server.thumbnail + '/' + 'original-' + server.thumbnail" v-else alt="">
+                                <img class='altered-image' v-else :src="server.thumbnail" :alt="server.name">
                             </label>
                             <input id='file-upload' type="file" name="image" @change="handleFileUpload($event)">
                         </div>
@@ -95,8 +95,8 @@ export default {
             try {
                 let response = await axios.post('/updateServer', data)
 
-                let index = this.$store.state.servers.indexOf(this.server)
-                this.$set(this.$store.state.servers[index], 'name', response.data.server.name)
+                let index = this.servers.indexOf(this.server)
+                this.$set(this.servers, index, response.data.server)
                 this.resetModal()
             } catch (error) {
                 console.log(error)
@@ -114,6 +114,9 @@ export default {
         }
     },
     computed: {
+        servers(){
+            return this.$store.state.servers
+        },
         croppedImageUrl(){
             return URL.createObjectURL(this.croppedImage)
         }
