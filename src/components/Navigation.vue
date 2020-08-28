@@ -26,9 +26,7 @@
         <i class="toggle-join-create-server fas fa-plus" @click="openModal()"></i>
 
         <Modal v-show="isModalOpen" @closeModal="closeModal()">
-            <template>
-                <ServerCreateOrJoin :selectedAction='selectedAction' @setSelectedAction='setSelectedAction' @closeModal='closeModal'></ServerCreateOrJoin>
-            </template>
+            <ServerCreateOrJoin :selectedAction='selectedAction' @setSelectedAction='setSelectedAction' @closeModal='closeModal'></ServerCreateOrJoin>
         </Modal>
 
     </div>

@@ -48,6 +48,11 @@ export default {
                         userId: response.data.userId,
                         username: response.data.username
                     })
+                    axios.interceptors.request.use(function (config) {
+                        config.headers.Authorization = 'Bearer ' + response.data.token
+
+                        return config
+                    });
                     this.$store.dispatch('getUserServers', response.data.userId)
                     router.replace('/')
                 }

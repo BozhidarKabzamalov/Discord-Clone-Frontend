@@ -2,11 +2,12 @@
     <div class="server" v-if='server'>
         <ServerRooms :server='server'></ServerRooms>
         <Chat :server='server'></Chat>
-        <Members :server='server' :members='server.users'></Members>
+        <Members :server='server'></Members>
     </div>
 </template>
 
 <script>
+import router from '../router'
 import ServerRooms from '../components/ServerRooms'
 import Chat from '../components/Chat'
 import Members from '../components/Members'
@@ -39,8 +40,13 @@ export default {
         }
     },
     mounted(){
-        this.$store.dispatch('joinServer', this.server)
-        this.$store.commit('setSelectedServer', this.server)
+        if (this.server) {
+            this.$store.dispatch('joinServer', this.server)
+            this.$store.commit('setSelectedServer', this.server)
+        } else {
+            //router.replace('/')
+        }
+
     }
 }
 </script>

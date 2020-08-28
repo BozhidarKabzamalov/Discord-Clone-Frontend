@@ -1,8 +1,8 @@
 <template lang="html">
-    <div class='server-settings'>
-        <i class="toggle-server-settings fas fa-cog" @click='serverSettingsWindow = true'></i>
-        <div class='server-settings-window' v-if='serverSettingsWindow'>
-            <div class="server-settings-form-container">
+    <div>
+        <i class="toggle-server-settings fas fa-cog" @click='openModal()'></i>
+        <Modal v-if='isModalOpen' @closeModal='closeModal()'>
+            <div class="server-settings">
                 <form class="server-settings-form" @submit='updateServer($event)'>
                     <h1>Edit server</h1>
                     <div class="inputs-container">
@@ -19,7 +19,8 @@
                         </div>
                     </div>
                     <div class="button-container">
-                        <button type="submit" name="button">Save</button>
+                        <div class='delete-button' @click='deleteServer()'>Delete</div>
+                        <button class='save-button' type="submit" name="button">Save</button>
                     </div>
                 </form>
                 <div class="image-editor" v-if='imageEditorWindow'>
@@ -30,9 +31,8 @@
                         <div class='apply-edits' @click='imageEditorWindow = false'>Apply</div>
                     </div>
                 </div>
-                <div class="black-screen" @click='resetModal()'></div>
             </div>
-        </div>
+        </Modal>
     </div>
 </template>
 
@@ -40,14 +40,18 @@
 import axios from 'axios'
 import router from '../router'
 import { Cropper } from 'vue-advanced-cropper'
+import Modal from './Modal'
 
 export default {
+    components: {
+        Modal
+    },
     props: [
         'server'
     ],
     data(){
         return {
-            serverSettingsWindow: false,
+            isModalOpen: false,
             serverName: this.server.name,
             originalImage: '',
             croppedImage: null,
@@ -61,8 +65,11 @@ export default {
         }
     },
     methods: {
-        resetModal(){
-            this.serverSettingsWindow = false
+        openModal() {
+            this.isModalOpen = true
+        },
+        closeModal() {
+            this.isModalOpen = false
             this.serverName = this.server.name
             this.originalImage = '',
             this.croppedImage = null,
@@ -97,16 +104,16 @@ export default {
 
                 let index = this.servers.indexOf(this.server)
                 this.$set(this.servers, index, response.data.server)
-                this.resetModal()
+                this.closeModal()
             } catch (error) {
                 console.log(error)
             }
         },
-        async deleteServer(server){
+        async deleteServer(){
             try {
-                let response = await axios.post('/deleteServer', server)
-                this.$store.commit('removeServer', server)
-                this.serverSettingsWindow = false
+                let response = await axios.post('/deleteServer', this.server)
+                this.$store.commit('removeServer', this.server)
+                this.closeModal()
                 router.replace('/')
             } catch (error) {
                 console.log(error)
@@ -131,27 +138,14 @@ export default {
 
 <style lang="css" scoped>
 .server-settings {
-    margin-left: auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .toggle-server-settings {
     cursor: pointer;
     color: #b9bbbe;
-}
-.server-settings-window {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-.server-settings-form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    position: relative;
 }
 .server-settings-form {
     display: flex;
@@ -164,7 +158,7 @@ export default {
     z-index: 9999;
     padding: 40px 0 0 0;
 }
-.server-settings-form button {
+.save-button {
     width: 100px;
     height: 40px;
     background-color: #7289da;
@@ -200,15 +194,6 @@ export default {
     border-bottom: 2px solid #e3e5e8;
     outline: none;
 }
-.black-screen {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 2;
-}
 .input-container {
     display: flex;
     justify-content: center;
@@ -234,7 +219,7 @@ input[type="file"] {
 }
 .button-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     background-color: #f6f6f7;
     width: 100%;
 }
@@ -284,5 +269,19 @@ input[type="file"] {
     width: 100%;
     height: 100%;
     border-radius: 50%;
+}
+.delete-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 40px;
+    background-color: #7289da;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 20px 40px;
+    background-color: #f04747;
 }
 </style>

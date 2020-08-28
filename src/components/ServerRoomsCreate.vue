@@ -1,34 +1,41 @@
 <template lang="html">
-    <div class='create-room'>
-        <i class="toggle-create-room fas fa-plus" @click='createRoomWindow = true'></i>
-        <div class="create-room-window" v-if='createRoomWindow'>
-            <div class="create-room-container">
-                <form class="create-room-form" @submit='createRoom($event)'>
-                    <h2>Create a chat room</h2>
-                    <h3>Room name</h3>
-                    <input type="text" v-model='roomName'>
-                    <button type="submit" name="button">Create room</button>
-                </form>
-            </div>
-            <div class="black-screen" @click='createRoomWindow = false'></div>
-        </div>
+    <div>
+        <i class="toggle-create-room fas fa-plus" @click='openModal()'></i>
+        <Modal v-show='isModalOpen' @closeModal='closeModal()'>
+            <form class="create-room-form" @submit='createRoom($event)'>
+                <h2>Create a chat room</h2>
+                <h3>Room name</h3>
+                <input type="text" v-model='roomName'>
+                <button type="submit" name="button">Create room</button>
+            </form>
+        </Modal>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
+import Modal from './Modal'
 
 export default {
+    components: {
+        Modal
+    },
     props: [
         'server'
     ],
     data(){
         return {
-            createRoomWindow: false,
-            roomName: ''
+            roomName: '',
+            isModalOpen: false
         }
     },
     methods: {
+        openModal() {
+            this.isModalOpen = true
+        },
+        closeModal() {
+            this.isModalOpen = false
+        },
         async createRoom(event){
             event.preventDefault()
 
@@ -39,8 +46,8 @@ export default {
 
             try {
                 let response = await axios.post('/createRoom', room)
-                this.createRoomWindow = false
                 this.server.rooms.push(response.data.room)
+                this.closeModal()
             } catch (error) {
                 console.log(error)
             }
@@ -51,37 +58,10 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.create-room {
-    margin-left: auto;
-    margin-right: 20px;
-}
 .toggle-create-room {
     color: #8e9297;
     cursor: pointer;
-}
-.create-room-window {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-.black-screen {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 2;
-}
-.create-room-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+    margin-right: 20px;
 }
 .create-room-form {
     display: flex;

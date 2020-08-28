@@ -29,6 +29,7 @@ export default {
     align-items: center;
 }
 .slot-container {
+    border-radius: 5px;
     background-color: #ffffff;
     z-index: 1;
 }

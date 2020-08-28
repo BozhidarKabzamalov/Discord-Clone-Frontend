@@ -70,12 +70,21 @@ const store = new Vuex.Store({
                     room: server.rooms[0],
                     index: 0
                 })
+
+                state.socket.emit('userCameOnline', state.username)
+
                 state.socket.on('messageToClient', (message) => {
                     server.rooms[state.selectedServerRoom].messages.push(message)
                 })
+
                 state.socket.on('chatHistory', (chatHistory) => {
                     server.rooms[state.selectedServerRoom].messages = chatHistory
                 })
+
+                state.socket.on('onlineUsers', (onlineUsers) => {
+                    server.onlineUsers = onlineUsers
+                })
+
             }
         },
         joinRoom({commit, state}, room){
@@ -88,7 +97,12 @@ const store = new Vuex.Store({
         async getUserServers({commit, state, dispatch}, userId){
             try {
                 let response = await axios.get("/servers/" + userId)
-                commit('setServers', response.data.servers)
+                let servers = response.data.servers
+                servers.forEach((server) => {
+                    server.onlineUsers = []
+                });
+
+                commit('setServers', servers)
                 commit('setFriends', response.data.friends)
             } catch (error) {
                 console.log(error)

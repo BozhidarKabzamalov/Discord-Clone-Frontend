@@ -8,9 +8,12 @@
             <h2 class='text-channels'>Rooms</h2>
             <ServerRoomsCreate v-if='userId == server.userId' :server='server'></ServerRoomsCreate>
         </div>
-        <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in server.rooms' @click='joinRoom(room, index)'>
-            <i class="hashtag fas fa-hashtag"></i>
-            <p>{{ room.name }}</p>
+        <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in server.rooms'>
+            <div class="room-name-container" @click='joinRoom(room, index)'>
+                <i class="hashtag fas fa-hashtag"></i>
+                <p>{{ room.name }}</p>
+            </div>
+            <i class="delete-room fas fa-times" @click='deleteRoom(room, index)'></i>
         </div>
     </div>
 </template>
@@ -39,6 +42,8 @@ export default {
         async deleteRoom(room, index){
             try {
                 let response = await axios.post('/deleteRoom', room)
+                this.$store.commit('setSelectedServerRoom', 0)
+                this.server.rooms.splice(index, 1)
             } catch (error) {
                 console.log(error)
             }
@@ -78,13 +83,13 @@ export default {
     font-size: 11px;
     font-weight: 700;
     height: 19px;
+    margin-right: auto;
 }
 .room {
     font-weight: 700;
     display: flex;
     align-items: center;
     font-size: 14px;
-    padding: 10px 20px;
     color: #72767d;
     cursor: pointer;
     user-select: none;
@@ -98,6 +103,11 @@ export default {
     color: rgba(255, 255, 255, 0.8);
     background-color: #34373c;
 }
+.delete-room {
+    display: none;
+    cursor: pointer;
+    margin-right: 20px;
+}
 .room:hover .delete-room {
     display: block;
     background-color: #34373c;
@@ -110,8 +120,15 @@ export default {
 .server-name {
     color: rgba(255, 255, 255, 0.9);
     font-weight: 600;
+    margin-right: auto;
 }
 .hashtag {
     margin-right: 5px;
+}
+.room-name-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 10px 20px;
 }
 </style>
