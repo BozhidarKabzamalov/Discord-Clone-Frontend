@@ -1,26 +1,30 @@
 <template lang="html">
-    <div class="rooms">
-        <div class="server">
-            <p class='server-name'>{{ server.name }}</p>
-            <ServerSettings v-if='userId == server.userId' :server='server'></ServerSettings>
-        </div>
-        <div class="text-channels-container">
-            <h2 class='text-channels'>Rooms</h2>
-            <ServerRoomsCreate v-if='userId == server.userId' :server='server'></ServerRoomsCreate>
-        </div>
-        <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in server.rooms'>
-            <div class="room-name-container" @click='joinRoom(room, index)'>
-                <i class="hashtag fas fa-hashtag"></i>
-                <p>{{ room.name }}</p>
+    <div class="server-rooms">
+        <div class="rooms">
+            <div class="server">
+                <p class='server-name'>{{ server.name }}</p>
+                <ServerSettings v-if='userId == server.userId' :server='server'></ServerSettings>
             </div>
-            <i class="delete-room fas fa-times" @click='deleteRoom(room, index)'></i>
+            <div class="text-channels-container">
+                <h2 class='text-channels'>Rooms</h2>
+                <ServerRoomsCreate v-if='userId == server.userId' :server='server'></ServerRoomsCreate>
+            </div>
+            <div :class="[{'active': index == selectedServerRoom}, 'room']" v-for='(room, index) in server.rooms'>
+                <div class="room-name-container" @click='joinRoom(room, index)'>
+                    <i class="hashtag fas fa-hashtag"></i>
+                    <p>{{ room.name }}</p>
+                </div>
+                <i class="delete-room fas fa-times" @click='deleteRoom(room, index)'></i>
+            </div>
         </div>
+        <Profile></Profile>
     </div>
 </template>
 
 <script>
 import ServerRoomsCreate from './ServerRoomsCreate'
 import ServerSettings from './ServerSettings'
+import Profile from './Profile'
 import axios from 'axios'
 
 export default {
@@ -29,7 +33,8 @@ export default {
     ],
     components: {
         ServerRoomsCreate,
-        ServerSettings
+        ServerSettings,
+        Profile
     },
     methods: {
         joinRoom(room, index){
@@ -61,9 +66,14 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.rooms {
+.server-rooms {
+    display: flex;
+    flex-direction: column;
     width: 240px;
     background-color: #2f3136;
+}
+.rooms {
+    flex: 1;
 }
 .text-channels-container {
     display: flex;

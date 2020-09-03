@@ -46,7 +46,6 @@ export default {
         } else {
             //router.replace('/')
         }
-
     }
 }
 </script>

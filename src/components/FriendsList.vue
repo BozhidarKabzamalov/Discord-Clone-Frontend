@@ -1,10 +1,13 @@
 <template lang="html">
     <div class="friends-list">
-        <div class="messages">
+        <div class="messages-container">
+            <div class="messages">
 
+            </div>
+            <Profile></Profile>
         </div>
         <div class="friends">
-            <div class="friends-header">
+            <!--<div class="friends-header">
                 <h1><i class="fas fa-user-friends"></i>Friends</h1>
                 <p :class='{ active: selectedTab == 0 }' @click='selectedTab = 0'>Online</p>
                 <p :class='{ active: selectedTab == 1 }' @click='selectedTab = 1'>Pending</p>
@@ -39,7 +42,7 @@
 
                     <p class='friend-username'>{{ friend.user.username }}</p>
                 </div>
-            </div>
+            </div>-->
 
         </div>
         <div class="placeholder">
@@ -49,7 +52,12 @@
 </template>
 
 <script>
+import Profile from './Profile'
+
 export default {
+    components: {
+        Profile
+    },
     data(){
         return {
             selectedTab: 0
@@ -81,9 +89,14 @@ export default {
     display: flex;
     flex: 1;
 }
-.messages {
+.messages-container {
+    display: flex;
+    flex-direction: column;
     width: 240px;
     background-color: #2f3136;
+}
+.messages {
+    flex: 1;
 }
 .friends {
     flex: 1;

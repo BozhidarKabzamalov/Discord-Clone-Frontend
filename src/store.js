@@ -59,6 +59,22 @@ const store = new Vuex.Store({
         }
     },
     actions: {
+        async getUserServers({commit, state}, userId){
+            try {
+                let response = await axios.get("/servers/" + userId)
+                let servers = response.data.servers
+                let friends = response.data.friends
+
+                servers.forEach((server) => {
+                    server.onlineUsers = []
+                });
+
+                commit('setServers', servers)
+                commit('setFriends', friends)
+            } catch (error) {
+                console.log(error)
+            }
+        },
         joinServer({commit, dispatch, state}, server){
             if (state.socket) {
                 state.socket.close()
@@ -93,20 +109,6 @@ const store = new Vuex.Store({
                 roomName: room.room.name,
                 serverId: room.serverId
             })
-        },
-        async getUserServers({commit, state, dispatch}, userId){
-            try {
-                let response = await axios.get("/servers/" + userId)
-                let servers = response.data.servers
-                servers.forEach((server) => {
-                    server.onlineUsers = []
-                });
-
-                commit('setServers', servers)
-                commit('setFriends', response.data.friends)
-            } catch (error) {
-                console.log(error)
-            }
         },
         autoLogin({commit, dispatch}){
             const token = localStorage.getItem('token')

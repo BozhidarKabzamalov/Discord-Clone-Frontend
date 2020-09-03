@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="members">
-        <div class="member" v-for='member in server.users' >
+        <div class="member" v-for='member in server.users'>
             <div class="member-image-container">
                 <img class='member-image' :src="member.image" alt="">
                 <div class='online-indicator' v-if='isUserOnline(member)'></div>
