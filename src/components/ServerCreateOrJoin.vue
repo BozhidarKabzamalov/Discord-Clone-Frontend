@@ -7,8 +7,8 @@
                 <div class="join-server" @click='setSelectedAction(1)'>Join Server</div>
             </div>
         </div>
-        <ServerCreate v-if="selectedAction == 0" @closeModal='closeModal'></ServerCreate>
-        <ServerJoin v-if="selectedAction == 1" @closeModal='closeModal'></ServerJoin>
+        <ServerCreate v-if="selectedAction == 0" @closeModal='closeModal' @goBack="$emit('resetSelectedAction')"></ServerCreate>
+        <ServerJoin v-if="selectedAction == 1" @closeModal='closeModal' @goBack="$emit('resetSelectedAction')"></ServerJoin>
     </div>
 </template>
 

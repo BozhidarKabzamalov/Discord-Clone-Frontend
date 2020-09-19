@@ -26,7 +26,6 @@ export default {
     background-color: #292b2f;
 }
 .profile-image-container {
-    position: relative;
     margin-right: 10px;
 }
 .profile-image {

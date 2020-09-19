@@ -17,7 +17,8 @@
                 </div>
             </div>
             <div class="button-container">
-                <button type="submit" name="button">Create</button>
+                <div class='go-back-button' @click="$emit('goBack')">Back</div>
+                <button class='create-server-button' type="submit" name="button">Create</button>
             </div>
         </form>
         <div class="image-editor" v-if='imageEditorWindow'>
@@ -110,15 +111,23 @@ export default {
     z-index: 9999;
     padding: 40px 0 0 0;
 }
-.create-server-form button {
+.create-server-button, .go-back-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100px;
     height: 40px;
-    background-color: #7289da;
     color: #ffffff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     margin: 20px 40px;
+}
+.create-server-button {
+    background-color: #7289da;
+}
+.go-back-button {
+    color: rgba(0, 0, 0, 0.8);
 }
 .create-server-form h1 {
     font-weight: 700;
@@ -171,7 +180,7 @@ input[type="file"] {
 }
 .button-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     background-color: #f6f6f7;
     width: 100%;
 }

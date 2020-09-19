@@ -8,7 +8,8 @@
                 <input type="text" v-model="serverName" placeholder="Enter a server name">
             </div>
             <div class="button-container">
-                <button type="submit" name="button">Join</button>
+                <div class='go-back-button' @click="$emit('goBack')">Back</div>
+                <button class='join-server-button' type="submit" name="button">Join</button>
             </div>
         </form>
     </div>
@@ -85,18 +86,26 @@ export default {
 }
 .button-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     background-color: #f6f6f7;
     width: 100%;
 }
-.button-container > button {
+.join-server-button, .go-back-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100px;
     height: 40px;
-    background-color: #43b581;
     color: #ffffff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     margin: 20px 40px;
+}
+.join-server-button {
+    background-color: #43b581;
+}
+.go-back-button {
+    color: rgba(0, 0, 0, 0.8);
 }
 </style>
