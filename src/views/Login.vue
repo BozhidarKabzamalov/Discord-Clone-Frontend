@@ -12,7 +12,11 @@
                     <input v-model='password' type="password">
                 </div>
                 <div class='error margin-bottom-20' v-if='error'>Wrong credentials</div>
-                <button type="submit" name="button">Continue</button>
+                <button class='margin-bottom-20' type="submit" name="button">Continue</button>
+                <div>
+                    <span class='need-account'>Need an account?</span>
+                    <span class='register-link' type="button" @click='goToRegister()'>Register</span>
+                </div>
             </form>
         </div>
     </div>
@@ -31,6 +35,9 @@ export default {
         }
     },
     methods: {
+        goToRegister(){
+            router.push('register')
+        },
         async onSubmit(){
             let userInfo = {
                 password: this.password,
@@ -137,5 +144,15 @@ button:hover {
 .error {
     color: #f04747;
     text-align: center;
+}
+.need-account {
+    font-size: 14px;
+    color: #72767d;
+    margin-right: 4px;
+}
+.register-link {
+    font-size: 14px;
+    color: #7289da;
+    cursor: pointer;
 }
 </style>

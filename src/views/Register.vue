@@ -15,7 +15,10 @@
                     <p>Password</p>
                     <input v-model='password' type="password">
                 </div>
-                <button type="submit" name="button">Continue</button>
+                <button class='margin-bottom-20' type="submit" name="button">Continue</button>
+                <div>
+                    <span class='login-link' type="button" @click='goToLogin()'>Already have an account?</span>
+                </div>
             </form>
         </div>
     </div>
@@ -34,6 +37,9 @@ export default {
         }
     },
     methods: {
+        goToLogin(){
+            router.push('login')
+        },
         async onSubmit(){
             let userInfo = {
                 username: this.username,
@@ -131,5 +137,10 @@ button {
 }
 button:hover {
     background-color: #677bc4;
+}
+.login-link {
+    font-size: 14px;
+    color: #7289da;
+    cursor: pointer;
 }
 </style>
