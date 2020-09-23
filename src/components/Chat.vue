@@ -21,18 +21,18 @@
                 <form class='send-message' @submit='sendMessage($event)'>
                     <input class='message-input' v-model="message" placeholder="Type a message">
                 </form>
-                <!--<div v-if='emoji.length'>
+                <div>
                     <div class="emojis-picker-container" v-if='toggleEmojiWindow'>
-                        <div class="emoji" v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
+                        <!--<div class="emoji" v-for='emoji in this.emoji' @click='message += emoji.keyword + " "'>
                             <img class='responsive-image' :src="emoji.image" :alt="emoji.keyword" @click='toggleEmojiWindow = !toggleEmojiWindow'>
-                        </div>
+                        </div>-->
                     </div>
                     <div class="emojis-button-container">
-                        <div class="emojis-button" @click='toggleEmojiWindow = !toggleEmojiWindow'>
+                        <!--<div class="emojis-button" @click='toggleEmojiWindow = !toggleEmojiWindow'>
                             <img class='responsive-image' :src="this.emoji[0].image" :alt="this.emoji[0].keyword">
-                        </div>
+                        </div>-->
                     </div>
-                </div>-->
+                </div>
             </div>
         </div>
     </div>

@@ -36,7 +36,7 @@ export default {
     padding: 30px 20px 0 20px;
 }
 .member-image-container {
-    position: relative;
+    position: inherit;
     margin-right: 10px;
 }
 .member-image {

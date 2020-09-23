@@ -9,11 +9,11 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         username: null,
+        userImage: null,
         userId: null,
         token: null,
         socket: null,
         servers: [],
-        friends: [],
         selectedServer: null,
         selectedServerRoom: 0
     },
@@ -38,9 +38,6 @@ const store = new Vuex.Store({
         setSelectedServerRoom(state, selectedServerRoom){
             state.selectedServerRoom = selectedServerRoom
         },
-        setFriends(state, friends){
-            state.friends = friends
-        },
         setUser(state, userData){
             state.token = userData.token
             state.userId = userData.userId
@@ -48,6 +45,9 @@ const store = new Vuex.Store({
             localStorage.setItem('token', userData.token);
             localStorage.setItem('userId', userData.userId);
             localStorage.setItem('username', userData.username);
+        },
+        setUserImage(state, userImage){
+            state.userImage = userImage
         },
         removeUser(state){
             state.token = null;
@@ -62,15 +62,16 @@ const store = new Vuex.Store({
         async getUserServers({commit, state}, userId){
             try {
                 let response = await axios.get("/servers/" + userId)
-                let servers = response.data.servers
-                let friends = response.data.friends
+
+                let servers = response.data.user.servers
+                let userImage = response.data.user.image
 
                 servers.forEach((server) => {
                     server.onlineUsers = []
                 });
 
+                commit('setUserImage', userImage)
                 commit('setServers', servers)
-                commit('setFriends', friends)
             } catch (error) {
                 console.log(error)
             }

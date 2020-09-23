@@ -1,7 +1,7 @@
 <template lang="html">
     <div class="profile">
         <div class="profile-image-container">
-            <img class='profile-image' src="https://media.discordapp.net/attachments/733747075455647898/738360317209214976/1.png" alt="">
+            <img class='profile-image' :src="userImage" alt="">
         </div>
         <span class='profile-username'>{{ this.$store.state.username }}</span>
         <i class="logout fas fa-sign-out-alt" @click='logout()'></i>
@@ -15,6 +15,11 @@ export default {
             this.$store.dispatch('logout')
         }
     },
+    computed: {
+        userImage(){
+            return this.$store.state.userImage
+        }
+    }
 }
 </script>
 

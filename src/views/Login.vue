@@ -67,6 +67,9 @@ export default {
 
 <style lang="css" scoped>
 .register {
+    background-image: url('../assets/registerLoginBackground.jpg');
+    background-size: cover;
+    background-position: center center;
     min-width: 100vw;
     min-height: 100vh;
     display: flex;
