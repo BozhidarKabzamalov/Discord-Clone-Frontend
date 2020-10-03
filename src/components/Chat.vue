@@ -112,6 +112,7 @@ export default {
     display: flex;
     flex-direction: column;
     background-color: #36393f;
+    height: 100vh;
 }
 .chat-container {
     display: flex;
@@ -133,8 +134,19 @@ export default {
     margin-right: 15px;
 }
 .messages {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     flex: 1;
     padding: 20px;
+    overflow: auto;
+}
+.messages::-webkit-scrollbar {
+    display: none;
+}
+.messages {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .message-body {
     display: flex;
@@ -148,6 +160,9 @@ export default {
     border-radius: 10px;
     margin-bottom: 20px;
     color: #e0e0e0;
+}
+.message:first-child {
+    margin-top:auto
 }
 .message:last-child {
     margin-bottom: 0px;

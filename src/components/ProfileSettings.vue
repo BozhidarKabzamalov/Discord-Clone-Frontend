@@ -1,25 +1,25 @@
 <template lang="html">
-    <div>
-        <i class="toggle-server-settings fas fa-cog" @click='openModal()'></i>
+    <div class="profile-settings">
+        <i class="toggle-profile-settings fas fa-cog" @click='openModal()'></i>
         <Modal v-if='isModalOpen' @closeModal='closeModal()'>
-            <div class="server-settings">
-                <form class="server-settings-form" @submit='updateServer($event)'>
-                    <h1>Edit server</h1>
+            <div class="profile-settings">
+                <form class="profile-settings-form" @submit='updateUser($event)'>
+                    <h1>Edit profile</h1>
                     <div class="inputs-container">
                         <div class="input-container">
-                            <label class='text-input-label' :for="serverName">server name</label>
-                            <input type="text" v-model="serverName" placeholder="Enter a server name">
+                            <label class='text-input-label' :for="username">username</label>
+                            <input type="text" v-model="username" placeholder="Enter a username">
                         </div>
                         <div class="input-container">
                             <label class="file-input-label" for="file-upload">
                                 <img class='altered-image' v-if='croppedImage' :src="croppedImageUrl">
-                                <img class='altered-image' v-else :src="server.thumbnail" :alt="server.name">
+                                <img class='altered-image' v-else :src="userImage" :alt="username">
                             </label>
                             <input id='file-upload' type="file" name="image" @change="handleFileUpload($event)">
                         </div>
                     </div>
                     <div class="button-container">
-                        <div class='delete-button' @click='deleteServer()'>Delete</div>
+                        <p class="logout" @click='logout()'>Log Out</p>
                         <button class='save-button' type="submit" name="button">Save</button>
                     </div>
                 </form>
@@ -41,13 +41,12 @@ export default {
         Modal,
         ImageCropper
     },
-    props: [
-        'server'
-    ],
     data(){
         return {
+            userId: this.$store.state.userId,
+            username: this.$store.state.username,
+            userImage: this.$store.state.userImage,
             isModalOpen: false,
-            serverName: this.server.name,
             originalImage: '',
             croppedImage: null,
             imageCropperWindow: false
@@ -78,63 +77,47 @@ export default {
             this.originalImage = URL.createObjectURL(event.target.files[0])
             this.imageCropperWindow = true
         },
-        async updateServer(){
+        async updateUser(){
             event.preventDefault()
 
             let data = new FormData()
-            data.append('serverId', this.server.id)
-            data.append('newName', this.serverName)
+            data.append('userId', this.userId)
+            data.append('username', this.username)
             data.append('image', this.croppedImage)
 
             try {
-                let response = await axios.post('/updateServer', data)
+                let response = await axios.post('/updateUser', data)
 
-                let index = this.servers.indexOf(this.server)
-                this.$set(this.servers, index, response.data.server)
                 this.closeModal()
             } catch (error) {
                 console.log(error)
             }
         },
-        async deleteServer(){
-            try {
-                let response = await axios.post('/deleteServer', this.server)
-                this.$store.commit('removeServer', this.server)
-                this.closeModal()
-                router.replace('/')
-            } catch (error) {
-                console.log(error)
-            }
+        logout(){
+            this.$store.dispatch('logout')
         }
     },
     computed: {
-        servers(){
-            return this.$store.state.servers
-        },
         croppedImageUrl(){
             return URL.createObjectURL(this.croppedImage)
         }
     },
-    watch: {
-        server(){
-            this.serverName = this.server.name
-        }
-    }
 }
 </script>
 
 <style lang="css" scoped>
-.toggle-server-settings {
+.toggle-profile-settings {
     cursor: pointer;
     color: #b9bbbe;
 }
-.server-settings {
+.profile-settings {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: auto;
 }
-.server-settings-form {
+.profile-settings-form {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -145,6 +128,44 @@ export default {
     z-index: 9999;
     padding: 40px 0 0 0;
 }
+.input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0 20px 0 20px;
+}
+.profile-settings-form h1 {
+    font-weight: 700;
+    font-size: 20px;
+    color: #7289da;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+.text-input-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4f5660;
+    text-transform: uppercase;
+}
+.profile-settings-form input {
+    color: #2f3136;
+    font-size: 16px;
+    padding: 12px 4px;
+    border: none;
+    border-bottom: 2px solid #e3e5e8;
+    outline: none;
+}
+.inputs-container {
+    display: flex;
+    margin-bottom: 60px;
+}
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f6f6f7;
+    width: 100%;
+}
 .save-button {
     width: 100px;
     height: 40px;
@@ -154,39 +175,6 @@ export default {
     border-radius: 4px;
     cursor: pointer;
     margin: 20px 40px;
-}
-.server-settings-form h1 {
-    font-weight: 700;
-    font-size: 20px;
-    color: #7289da;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-.server-settings-form p {
-    color: #747f8d;
-    font-size: 16px;
-    margin-bottom: 60px;
-}
-.text-input-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: #4f5660;
-    text-transform: uppercase;
-}
-.server-settings-form input {
-    color: #2f3136;
-    font-size: 16px;
-    padding: 12px 4px;
-    border: none;
-    border-bottom: 2px solid #e3e5e8;
-    outline: none;
-}
-.input-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin: 0 20px 0 20px;
 }
 input[type="file"] {
     display: none;
@@ -204,33 +192,21 @@ input[type="file"] {
     color: #ffffff;
     font-size: 20px;
 }
-.button-container {
-    display: flex;
-    justify-content: space-between;
-    background-color: #f6f6f7;
-    width: 100%;
-}
-.inputs-container {
-    display: flex;
-    margin-bottom: 60px;
-}
 .altered-image {
     width: 100%;
     height: 100%;
     border-radius: 50%;
 }
-.delete-button {
+.logout {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100px;
     height: 40px;
-    background-color: #7289da;
-    color: #ffffff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     margin: 20px 40px;
-    background-color: #f04747;
+    color: rgba(0, 0, 0, 0.8);
 }
 </style>

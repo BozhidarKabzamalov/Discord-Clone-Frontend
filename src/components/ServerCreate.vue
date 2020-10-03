@@ -21,49 +21,36 @@
                 <button class='create-server-button' type="submit" name="button">Create</button>
             </div>
         </form>
-        <div class="image-editor" v-if='imageEditorWindow'>
-            <div class="cropper-container">
-                <cropper :src="originalImage" @change="onChange" :stencil-props="{ aspectRatio: 1 }" />
-            </div>
-            <div class="image-editor-footer">
-                <div class='apply-edits' @click='imageEditorWindow = false'>Apply</div>
-            </div>
-        </div>
+        <ImageCropper v-if='imageCropperWindow' :originalImage='originalImage' @closeCropper='closeCropper'></ImageCropper>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
 import { Cropper } from 'vue-advanced-cropper'
+import ImageCropper from './ImageCropper'
 
 export default {
     components: {
-        Cropper
+        Cropper,
+        ImageCropper
     },
     data(){
         return {
             serverName: '',
             originalImage: '',
             croppedImage: null,
-            coordinates: {
-                width: 0,
-                height: 0,
-                left: 0,
-                top: 0,
-            },
-            imageEditorWindow: false
+            imageCropperWindow: false
         }
     },
     methods: {
-        onChange({ coordinates, canvas, }){
-			this.coordinates = coordinates;
-            canvas.toBlob(blob => {
-                this.croppedImage = blob
-            });
-		},
+        closeCropper(croppedImage){
+            this.croppedImage = croppedImage
+            this.imageCropperWindow = false
+        },
         handleFileUpload(event){
             this.originalImage = URL.createObjectURL(event.target.files[0])
-            this.imageEditorWindow = true
+            this.imageCropperWindow = true
         },
         async createServer(event){
             event.preventDefault()
@@ -187,44 +174,6 @@ input[type="file"] {
 .inputs-container {
     display: flex;
     margin-bottom: 60px;
-}
-.image-editor {
-    position: absolute;
-    width: 600px;
-    background-color: #36393f;
-    z-index: 9999999;
-    border-radius: 3px;
-}
-.cropper-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 400px;
-    width: 550px;
-    margin: 25px;
-    background-color: #1c1d20;
-    border-radius: 3px;
-}
-.image-editor-footer {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    background-color: #2f3136;
-    width: 100%;
-    height: 65px;
-}
-.apply-edits {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 67px;
-    height: 32px;
-    background-color: #7289da;
-    color: #ffffff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    margin: 0 20px 0 0;
 }
 .altered-image {
     width: 100%;

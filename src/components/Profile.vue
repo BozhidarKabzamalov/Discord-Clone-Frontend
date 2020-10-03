@@ -4,16 +4,16 @@
             <img class='profile-image' :src="userImage" alt="">
         </div>
         <span class='profile-username'>{{ this.$store.state.username }}</span>
-        <i class="logout fas fa-sign-out-alt" @click='logout()'></i>
+        <ProfileSettings></ProfileSettings>
     </div>
 </template>
 
 <script>
+import ProfileSettings from './ProfileSettings'
+
 export default {
-    methods: {
-        logout(){
-            this.$store.dispatch('logout')
-        }
+    components: {
+        ProfileSettings
     },
     computed: {
         userImage(){
@@ -43,13 +43,5 @@ export default {
     color: rgba(255, 255, 255, 0.8);
     margin-right: 10px;
     font-size: 14px;
-}
-.logout {
-    color: #8e9297;
-    margin-left: auto;
-    cursor: pointer;
-}
-.logout:hover {
-    color: #dbdcdd;
 }
 </style>

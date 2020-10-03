@@ -8,6 +8,11 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
+        user: {
+            userId: null,
+            username: null,
+            userImage: null,
+        },
         username: null,
         userImage: null,
         userId: null,
