@@ -2,7 +2,7 @@
     <div class="register">
         <div class="register-container">
             <p>Create an account</p>
-            <form @submit.prevent="onSubmit" novalidate>
+            <form @submit.prevent="register" novalidate>
                 <div class="margin-bottom-20">
                     <p>Email</p>
                     <input v-model='email' type='email'>
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import router from '../router'
 
 export default {
@@ -40,30 +39,14 @@ export default {
         goToLogin(){
             router.push('login')
         },
-        async onSubmit(){
+        register(){
             let userInfo = {
                 username: this.username,
                 password: this.password,
                 email: this.email
             }
 
-            try {
-                let response = await axios.post('/register', userInfo)
-
-                if (response.status == 401) {
-                    console.log('Error')
-                } else {
-                    this.$store.commit('setUser', {
-                        token: response.data.token,
-                        userId: response.data.userId,
-                        username: response.data.username
-                    })
-                    router.replace('/')
-                }
-            } catch (error) {
-                console.log(error)
-            }
-
+            this.$store.dispatch('register', userInfo)
         }
     }
 }

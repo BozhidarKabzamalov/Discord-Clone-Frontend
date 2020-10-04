@@ -62,12 +62,6 @@ export default {
             this.serverName = this.server.name
             this.originalImage = '',
             this.croppedImage = null,
-            this.coordinates = {
-                width: 0,
-                height: 0,
-                left: 0,
-                top: 0,
-            },
             this.imageCropperWindow = false
         },
         closeCropper(croppedImage){
@@ -109,7 +103,7 @@ export default {
     },
     computed: {
         servers(){
-            return this.$store.state.servers
+            return this.$store.state.server.servers
         },
         croppedImageUrl(){
             return URL.createObjectURL(this.croppedImage)

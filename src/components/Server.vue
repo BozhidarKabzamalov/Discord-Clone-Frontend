@@ -25,7 +25,7 @@ export default {
     },
     computed: {
         server(){
-            return this.$store.state.servers.find((server) => {
+            return this.$store.state.server.servers.find((server) => {
                 return server.endpoint == '/' + this.serverEndpoint
             })
         }

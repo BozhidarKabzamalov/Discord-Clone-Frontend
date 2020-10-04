@@ -3,7 +3,7 @@
         <div class="profile-image-container">
             <img class='profile-image' :src="userImage" alt="">
         </div>
-        <span class='profile-username'>{{ this.$store.state.username }}</span>
+        <span class='profile-username'>{{ this.$store.state.authentication.user.username }}</span>
         <ProfileSettings></ProfileSettings>
     </div>
 </template>
@@ -17,7 +17,7 @@ export default {
     },
     computed: {
         userImage(){
-            return this.$store.state.userImage
+            return this.$store.state.authentication.user.userImage
         }
     }
 }

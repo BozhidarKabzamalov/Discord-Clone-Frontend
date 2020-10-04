@@ -56,10 +56,10 @@ export default {
     },
     computed: {
         userId(){
-            return this.$store.state.userId
+            return this.$store.state.authentication.user.userId
         },
         selectedServerRoom(){
-            return this.$store.state.selectedServerRoom
+            return this.$store.state.server.selectedServerRoom
         }
     }
 }

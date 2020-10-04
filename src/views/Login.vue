@@ -2,7 +2,7 @@
     <div class="register">
         <div class="register-container">
             <p>Welcome back!</p>
-            <form @submit.prevent="onSubmit" novalidate>
+            <form @submit.prevent="login" novalidate>
                 <div class="margin-bottom-20">
                     <p>Email</p>
                     <input v-model='email' type='email'>
@@ -11,7 +11,6 @@
                     <p>Password</p>
                     <input v-model='password' type="password">
                 </div>
-                <div class='error margin-bottom-20' v-if='error'>Wrong credentials</div>
                 <button class='margin-bottom-20' type="submit" name="button">Continue</button>
                 <div>
                     <span class='need-account'>Need an account?</span>
@@ -23,50 +22,26 @@
 </template>
 
 <script>
-import axios from 'axios'
 import router from '../router'
 
 export default {
     data(){
         return {
             email: '',
-            password: '',
-            error: null
+            password: ''
         }
     },
     methods: {
         goToRegister(){
             router.push('register')
         },
-        async onSubmit(){
+        login(){
             let userInfo = {
                 password: this.password,
                 email: this.email
             }
 
-            try {
-                let response = await axios.post('/login', userInfo)
-
-                if (response.status == 401) {
-                    this.error = true
-                } else {
-                    this.$store.commit('setUser', {
-                        token: response.data.token,
-                        userId: response.data.userId,
-                        username: response.data.username
-                    })
-                    axios.interceptors.request.use(function (config) {
-                        config.headers.Authorization = 'Bearer ' + response.data.token
-
-                        return config
-                    });
-                    this.$store.dispatch('getUserServers', response.data.userId)
-                    router.replace('/')
-                }
-            } catch (error) {
-                console.log(error)
-            }
-
+            this.$store.dispatch('login', userInfo);
         }
     }
 }
@@ -140,10 +115,6 @@ button {
 }
 button:hover {
     background-color: #677bc4;
-}
-.error {
-    color: #f04747;
-    text-align: center;
 }
 .need-account {
     font-size: 14px;

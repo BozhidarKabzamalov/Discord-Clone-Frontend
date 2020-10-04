@@ -43,9 +43,9 @@ export default {
     },
     data(){
         return {
-            userId: this.$store.state.userId,
-            username: this.$store.state.username,
-            userImage: this.$store.state.userImage,
+            userId: this.$store.state.authentication.user.userId,
+            username: this.$store.state.authentication.user.username,
+            userImage: this.$store.state.authentication.user.userImage,
             isModalOpen: false,
             originalImage: '',
             croppedImage: null,
@@ -61,12 +61,6 @@ export default {
             this.serverName = this.server.name
             this.originalImage = '',
             this.croppedImage = null,
-            this.coordinates = {
-                width: 0,
-                height: 0,
-                left: 0,
-                top: 0,
-            },
             this.imageCropperWindow = false
         },
         closeCropper(croppedImage){
@@ -98,10 +92,20 @@ export default {
         }
     },
     computed: {
+        user(){
+            return this.$store.state.authentication.user
+        },
         croppedImageUrl(){
             return URL.createObjectURL(this.croppedImage)
         }
     },
+    watch: {
+        user(){
+            this.userId = this.$store.state.authentication.user.userId
+            this.username = this.$store.state.authentication.user.username
+            this.userImage = this.$store.state.authentication.user.userImage
+        }
+    }
 }
 </script>
 

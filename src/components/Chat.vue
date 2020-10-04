@@ -91,16 +91,16 @@ export default {
     },
     computed: {
         username(){
-            return this.$store.state.username
+            return this.$store.state.authentication.user.username
         },
         userId(){
-            return this.$store.state.userId
+            return this.$store.state.authentication.user.userId
         },
         socket(){
-            return this.$store.state.socket
+            return this.$store.state.server.socket
         },
         selectedServerRoom(){
-            return this.$store.state.selectedServerRoom
+            return this.$store.state.server.selectedServerRoom
         }
     }
 }

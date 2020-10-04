@@ -64,10 +64,10 @@ export default {
     },
     computed: {
         servers(){
-            return this.$store.state.servers
+            return this.$store.state.server.servers
         },
         selectedServer(){
-            return this.$store.state.selectedServer
+            return this.$store.state.server.selectedServer
         }
     }
 }

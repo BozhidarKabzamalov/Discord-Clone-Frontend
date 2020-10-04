@@ -1,22 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import router from './router'
+import router from '../router'
 import axios from 'axios'
 import io from 'socket.io-client'
 
-Vue.use(Vuex)
-
-const store = new Vuex.Store({
+const server = {
     state: {
-        user: {
-            userId: null,
-            username: null,
-            userImage: null,
-        },
-        username: null,
-        userImage: null,
-        userId: null,
-        token: null,
         socket: null,
         servers: [],
         selectedServer: null,
@@ -42,25 +29,6 @@ const store = new Vuex.Store({
         },
         setSelectedServerRoom(state, selectedServerRoom){
             state.selectedServerRoom = selectedServerRoom
-        },
-        setUser(state, userData){
-            state.token = userData.token
-            state.userId = userData.userId
-            state.username = userData.username
-            localStorage.setItem('token', userData.token);
-            localStorage.setItem('userId', userData.userId);
-            localStorage.setItem('username', userData.username);
-        },
-        setUserImage(state, userImage){
-            state.userImage = userImage
-        },
-        removeUser(state){
-            state.token = null;
-            state.userId = null;
-            state.username = null;
-            localStorage.removeItem('token')
-            localStorage.removeItem('userId')
-            localStorage.removeItem('username')
         }
     },
     actions: {
@@ -68,20 +36,18 @@ const store = new Vuex.Store({
             try {
                 let response = await axios.get("/servers/" + userId)
 
-                let servers = response.data.user.servers
-                let userImage = response.data.user.image
+                let servers = response.data.servers
 
                 servers.forEach((server) => {
                     server.onlineUsers = []
                 });
 
-                commit('setUserImage', userImage)
                 commit('setServers', servers)
             } catch (error) {
                 console.log(error)
             }
         },
-        joinServer({commit, dispatch, state}, server){
+        joinServer({commit, dispatch, state, rootState}, server){
             if (state.socket) {
                 state.socket.close()
             }
@@ -93,7 +59,7 @@ const store = new Vuex.Store({
                     index: 0
                 })
 
-                state.socket.emit('userCameOnline', state.username)
+                state.socket.emit('userCameOnline', rootState.authentication.user.username)
 
                 state.socket.on('messageToClient', (message) => {
                     server.rooms[state.selectedServerRoom].messages.push(message)
@@ -115,31 +81,8 @@ const store = new Vuex.Store({
                 roomName: room.room.name,
                 serverId: room.serverId
             })
-        },
-        autoLogin({commit, dispatch}){
-            const token = localStorage.getItem('token')
-            const userId = localStorage.getItem('userId')
-            const username = localStorage.getItem('username')
-            if (!token) {
-                return
-            }
-            commit('setUser', {
-                token: token,
-                userId: userId,
-                username: username
-            })
-            axios.interceptors.request.use(function (config) {
-                config.headers.Authorization = 'Bearer ' + token
-
-                return config
-            });
-            dispatch('getUserServers', userId)
-        },
-        logout({commit}){
-            commit('removeUser')
-            router.replace('/login')
         }
     }
-})
+}
 
-export default store
+export default server
