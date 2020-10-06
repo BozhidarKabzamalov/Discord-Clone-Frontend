@@ -1,9 +1,9 @@
 <template lang="html">
-    <div class="profile">
+    <div class="profile" v-if='user'>
         <div class="profile-image-container">
-            <img class='profile-image' :src="userImage" alt="">
+            <img class='profile-image' :src="user.image" :alt="user.username">
         </div>
-        <span class='profile-username'>{{ this.$store.state.authentication.user.username }}</span>
+        <span class='profile-username'>{{ user.username }}</span>
         <ProfileSettings></ProfileSettings>
     </div>
 </template>
@@ -16,8 +16,8 @@ export default {
         ProfileSettings
     },
     computed: {
-        userImage(){
-            return this.$store.state.authentication.user.userImage
+        user(){
+            return this.$store.state.authentication.user
         }
     }
 }

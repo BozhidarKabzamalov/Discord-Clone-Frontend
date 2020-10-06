@@ -3,28 +3,18 @@ import axios from 'axios'
 
 const authentication = {
     state: {
-        user: {
-            userId: null,
-            username: null,
-            userImage: null,
-            token: null
-        }
+        user: null
     },
     mutations: {
         setUser(state, user){
             state.user = user
-            localStorage.setItem('userId', user.userId);
+            localStorage.setItem('userId', user.id);
             localStorage.setItem('username', user.username);
-            localStorage.setItem('userImage', user.userImage);
+            localStorage.setItem('userImage', user.image);
             localStorage.setItem('token', user.token);
         },
         removeUser(state){
-            state.user = {
-                userId: null,
-                username: null,
-                userImage: null,
-                token: null
-            }
+            state.user = null
             localStorage.removeItem('userId')
             localStorage.removeItem('username')
             localStorage.removeItem('userImage')
@@ -58,7 +48,7 @@ const authentication = {
 
                         return config
                     });
-                    dispatch('getUserServers', response.data.user.userId)
+                    dispatch('getUserServers', response.data.user.id)
                     router.replace('/')
                 }
             } catch (error) {
@@ -76,9 +66,9 @@ const authentication = {
             }
 
             let user = {
-                userId: userId,
+                id: userId,
                 username: username,
-                userImage: userImage,
+                image: userImage,
                 token: token
             }
 

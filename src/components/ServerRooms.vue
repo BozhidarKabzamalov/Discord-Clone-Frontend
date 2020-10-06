@@ -56,7 +56,7 @@ export default {
     },
     computed: {
         userId(){
-            return this.$store.state.authentication.user.userId
+            return this.$store.state.authentication.user.id
         },
         selectedServerRoom(){
             return this.$store.state.server.selectedServerRoom

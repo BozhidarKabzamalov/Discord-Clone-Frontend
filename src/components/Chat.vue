@@ -94,7 +94,7 @@ export default {
             return this.$store.state.authentication.user.username
         },
         userId(){
-            return this.$store.state.authentication.user.userId
+            return this.$store.state.authentication.user.id
         },
         socket(){
             return this.$store.state.server.socket

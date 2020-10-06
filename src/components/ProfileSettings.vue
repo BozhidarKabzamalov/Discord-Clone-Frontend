@@ -43,9 +43,9 @@ export default {
     },
     data(){
         return {
-            userId: this.$store.state.authentication.user.userId,
+            userId: this.$store.state.authentication.user.id,
             username: this.$store.state.authentication.user.username,
-            userImage: this.$store.state.authentication.user.userImage,
+            userImage: this.$store.state.authentication.user.image,
             isModalOpen: false,
             originalImage: '',
             croppedImage: null,
@@ -58,7 +58,6 @@ export default {
         },
         closeModal() {
             this.isModalOpen = false
-            this.serverName = this.server.name
             this.originalImage = '',
             this.croppedImage = null,
             this.imageCropperWindow = false
@@ -81,7 +80,18 @@ export default {
 
             try {
                 let response = await axios.post('/updateUser', data)
+                let user = response.data.user
+                user.token = this.$store.state.authentication.user.token
 
+                this.servers.forEach((server, i) => {
+                    let index = server.users.findIndex(element => {
+                        return element.id == user.id
+                    })
+
+                    this.$set(server.users, index, user)
+                });
+                this.$store.state.server.socket.emit('userCameOnline', user.username)
+                this.$store.commit('setUser', user)
                 this.closeModal()
             } catch (error) {
                 console.log(error)
@@ -92,6 +102,9 @@ export default {
         }
     },
     computed: {
+        servers(){
+            return this.$store.state.server.servers
+        },
         user(){
             return this.$store.state.authentication.user
         },
@@ -101,9 +114,9 @@ export default {
     },
     watch: {
         user(){
-            this.userId = this.$store.state.authentication.user.userId
-            this.username = this.$store.state.authentication.user.username
-            this.userImage = this.$store.state.authentication.user.userImage
+            this.userId = this.user.id
+            this.username = this.user.username
+            this.userImage = this.user.image
         }
     }
 }
